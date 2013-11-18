@@ -9,20 +9,20 @@
 /*                                                                         */
 /***************************************************************************/
 /* 
-   What we have here is a totally self contained 3DS file loader, that is 
-   easy to use and extremely powerful.
+What we have here is a totally self contained 3DS file loader, that is 
+easy to use and extremely powerful.
 
-   Using it?
-   <1> #include "3ds.h"
-   <2> C3DS myObj;
-   <3> myObj.Create("cube.3ds");
+Using it?
+<1> #include "3ds.h"
+<2> C3DS myObj;
+<3> myObj.Create("cube.3ds");
 
-   <4> Access the 3D data through the m_Object member..vertices etc
-       myObj.m_Object.m_iNumMaterials;
-	   myObj.m_Object.m_iNumMeshs;
-	   .. etc
+<4> Access the 3D data through the m_Object member..vertices etc
+myObj.m_Object.m_iNumMaterials;
+myObj.m_Object.m_iNumMeshs;
+.. etc
 
-   <5> myObj.Release(); // Tidy up when you've finished.
+<5> myObj.Release(); // Tidy up when you've finished.
 
 */
 /***************************************************************************/
@@ -99,44 +99,44 @@ using namespace std ;
 class stPosition
 {
 public:
-	int   iFrame;
-	float x, y, z;
+  int   iFrame;
+  float x, y, z;
 };
 class stScale
 {
 public:
-	int   iFrame;
-	float x, y, z;
+  int   iFrame;
+  float x, y, z;
 };
 class stRotation
 {
 public:
-	int   iFrame;
-	float rotation_rads;
-	float axis_x, axis_y, axis_z;
+  int   iFrame;
+  float rotation_rads;
+  float axis_x, axis_y, axis_z;
 };
 
 class stAnimation
 {
 public:
-	char          szObjName[256];
-	int           iPosKeys;
-	stPosition*   pPosition;   // stPosition
-	int           iRotKeys;
-	stRotation*   pRotation;   // stRotation
-	int           iScaleKeys;
-	stScale*      pScale;      // stScale
-	
-	stAnimation()
-	{
-		iPosKeys = 0;
-		pPosition = NULL;
-		iRotKeys = 0;
-		pRotation = NULL;
-		iScaleKeys = 0;
-		pScale = NULL;
-		szObjName[0]='\0';
-	}
+  char          szObjName[256];
+  int           iPosKeys;
+  stPosition*   pPosition;   // stPosition
+  int           iRotKeys;
+  stRotation*   pRotation;   // stRotation
+  int           iScaleKeys;
+  stScale*      pScale;      // stScale
+
+  stAnimation()
+  {
+    iPosKeys = 0;
+    pPosition = NULL;
+    iRotKeys = 0;
+    pRotation = NULL;
+    iScaleKeys = 0;
+    pScale = NULL;
+    szObjName[0]='\0';
+  }
 };
 
 
@@ -145,137 +145,137 @@ public:
 
 class C3DS
 {
-	class Color
-	{
-	public:
-		unsigned short r,g,b;
-		Color (void) : r(0), g(0), b(0)
-		{}
-	};
+  class Color
+  {
+  public:
+    unsigned short r,g,b;
+    Color (void) : r(0), g(0), b(0)
+    {}
+  };
 public:
 
-	// MATERIAL INFORMATION
-	class stMaterial
-	{
-	public:
-		char szName[256];
-		Color Colour;
-		Color Ambient;
-		Color Specular;
-		bool bTexFile;
-		char szTextureFile[256];
-		stMaterial()
-		{
-			bTexFile = false;
-			szName[0]='\0';
-			szTextureFile[0]='\0';
-		};
-	};
+  // MATERIAL INFORMATION
+  class stMaterial
+  {
+  public:
+    char szName[256];
+    Color Colour;
+    Color Ambient;
+    Color Specular;
+    bool bTexFile;
+    char szTextureFile[256];
+    stMaterial()
+    {
+      bTexFile = false;
+      szName[0]='\0';
+      szTextureFile[0]='\0';
+    };
+  };
 
-	// MESH INFORMATION
-	class stVert
-	{
-	public:
-		float x, y, z;
-	};
+  // MESH INFORMATION
+  class stVert
+  {
+  public:
+    float x, y, z;
+  };
 
-	class stFace
-	{
-	public:
-	   // 3 Sides of a triangle make a face.
-		unsigned int corner[3];
-		int MaterialID;
-		stFace()
-		{
-			MaterialID = 0;
-		}
-	};
-	class stTex
-	{
-	public:
-		float tu, tv;
-	};
+  class stFace
+  {
+  public:
+    // 3 Sides of a triangle make a face.
+    unsigned int corner[3];
+    int MaterialID;
+    stFace()
+    {
+      MaterialID = 0;
+    }
+  };
+  class stTex
+  {
+  public:
+    float tu, tv;
+  };
 
-	class stMesh
-	{
-	public:
-		char         szMeshName[256];
-		int          iNumVerts;
-		stVert*      pVerts;
-		int          iNumFaces;
-		stFace*      pFaces;
-		bool         bTextCoords;
-		stTex*       pTexs;
+  class stMesh
+  {
+  public:
+    char         szMeshName[256];
+    int          iNumVerts;
+    stVert*      pVerts;
+    int          iNumFaces;
+    stFace*      pFaces;
+    bool         bTextCoords;
+    stTex*       pTexs;
 
-		stMesh()
-		{
-			iNumVerts   = 0;
-			pVerts      = NULL;
-			iNumFaces   = 0;
-			pFaces      = NULL;
-			pTexs       = NULL;
-			bTextCoords = false;
-			szMeshName[0]='\0';
-		}
-		
-	};
+    stMesh()
+    {
+      iNumVerts   = 0;
+      pVerts      = NULL;
+      iNumFaces   = 0;
+      pFaces      = NULL;
+      pTexs       = NULL;
+      bTextCoords = false;
+      szMeshName[0]='\0';
+    }
+
+  };
 
 
 protected:
-	class stChunk
-	{
-	public:
-		unsigned short ID;
-		unsigned int length;
-		unsigned int bytesRead;
-	};
+  class stChunk
+  {
+  public:
+    unsigned short ID;
+    unsigned int length;
+    unsigned int bytesRead;
+  };
 
 public:
-	C3DS(void);
-	~C3DS(void);
+  C3DS(void);
+  ~C3DS(void);
 
-	bool Create(char* szFileName);
-	void Release();
+  bool Create(char* szFileName);
+  void Release();
 public:
 
-	int                m_iNumMeshs;
-	vector<stMesh>     m_pMeshs;
+  int                m_iNumMeshs;
+  vector<stMesh>     m_pMeshs;
 
-	int                m_iNumMaterials;
-	vector<stMaterial> m_pMaterials;
+  int                m_iNumMaterials;
+  vector<stMaterial> m_pMaterials;
 
-	// Animation stuff is saved in these two parts.
-	int                   m_iNumAnimObjects;
-	vector<stAnimation>   m_pAnimation;
-	int                   m_iKeyFrames;
+  // Animation stuff is saved in these two parts.
+  int                   m_iNumAnimObjects;
+  vector<stAnimation>   m_pAnimation;
+  int                   m_iKeyFrames;
 
 protected:
 
-	FILE* m_fp;
+  FILE* m_fp;
 
-	void ParseChunk        (stChunk* Chunk);
-	void GetMaterialName   (stChunk* Chunk);
-	void GetDiffuseColour  (stChunk* Chunk);
-	void GetAmbientColour  (stChunk* Chunk);
-	void GetSpecularColour  (stChunk* Chunk);
-	void GetTexFileName    (stChunk* Chunk);
-	void GetMeshObjectName (stChunk* Chunk);
-	void ReadMeshTexCoords (stChunk* Chunk);
-	void ReadMeshVertices  (stChunk* Chunk);
-	void ReadMeshFaces     (stChunk* Chunk);
-	void ReadMeshMaterials (stChunk* Chunk);
-	int GetString          (char* pBuffer);
-	void SkipChunk         (stChunk *pChunk);
-	void ReadChunk         (stChunk *pChunk);
+  void ParseChunk        (stChunk* Chunk);
+  void GetMaterialName   (stChunk* Chunk);
+  void GetDiffuseColour  (stChunk* Chunk);
+  void GetAmbientColour  (stChunk* Chunk);
+  void GetSpecularColour  (stChunk* Chunk);
+  void GetTexFileName    (stChunk* Chunk);
+  void GetMeshObjectName (stChunk* Chunk);
+  void ReadMeshTexCoords (stChunk* Chunk);
+  void ReadMeshVertices  (stChunk* Chunk);
+  void ReadMeshFaces     (stChunk* Chunk);
+  void ReadMeshMaterials (stChunk* Chunk);
+  int GetString          (char* pBuffer);
+  void SkipChunk         (stChunk *pChunk);
+  void ReadChunk         (stChunk *pChunk);
 
 
-	// Animation
-	void StartEndFrames(stChunk* Chunk);
-	void ReadNameOfObjectToAnimate(stChunk* Chunk);
-	void ReadPivotPoint(stChunk* Chunk);
-	void ReadAnimPos(stChunk* Chunk);
-	void ReadAnimRot(stChunk* Chunk);
-	void ReadAnimScale(stChunk* Chunk);
+  // Animation
+  void StartEndFrames(stChunk* Chunk);
+  void ReadNameOfObjectToAnimate(stChunk* Chunk);
+  void ReadPivotPoint(stChunk* Chunk);
+  void ReadAnimPos(stChunk* Chunk);
+  void ReadAnimRot(stChunk* Chunk);
+  void ReadAnimScale(stChunk* Chunk);
 
 };
 
