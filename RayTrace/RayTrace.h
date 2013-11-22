@@ -13,15 +13,67 @@ RayTrace Class
 #include <stdlib.h>
 
 #include "Utils.h"
+#include <string>
+#include <sstream>
+#include <iostream>
 
 /*
 RayTrace Class - The class containing the function you will need to implement
 
 This is the class with the function you need to implement
 */
+class Ray
+{
+private:
+  Vector _start;
+  Vector _direction;
+  Vector _endpoint;
+
+public:
+  Ray(Vector pStartPos, Vector pDirVec, Vector endpoint)
+  {
+    _start = pStartPos;
+    _direction = pDirVec;
+    _endpoint = endpoint;
+  }
+
+  std::string ToString()
+  {
+    std::stringstream str;
+    str<< "Point: <" << _start.x << "," << _start.y << "," << _start.z << "> ";
+    str<< "Direction <" <<_direction.x << "," <<_direction.y << ","  <<_direction.z << "> " ;
+    str<< "Endpoint <" <<_endpoint.x << "," <<_endpoint.y << ","  <<_endpoint.z << ">" ;
+    return str.str();
+  }
+ 
+};
 
 class RayTrace
 {
+private:
+  Ray ComputeStartRay( int screenX, int screenY)
+  {
+/*    Vector curCamPos = m_Scene.GetCamera().position;
+    float nearLen =  m_Scene.GetCamera().nearClip;
+    float height= 2*nearLen*tan(m_Scene.GetCamera().GetFOV() / 2);
+    float width= height* (WINDOW_WIDTH/WINDOW_HEIGHT);
+    
+    return curCamPos + m_Scene.GetCamera().up*
+    */
+    const float width = WINDOW_WIDTH;  // pixels across
+    const float height = WINDOW_HEIGHT;  // pixels high
+    float normalized_i = (screenX / width) - 0.5;
+    float normalized_j = (screenY / height) - 0.5;
+    Vector camera_right = m_Scene.GetCamera().GetTarget().Cross( m_Scene.GetCamera().GetUp());
+
+    Vector image_point = camera_right * normalized_i +
+                        m_Scene.GetCamera().GetUp() * normalized_j  +
+                        m_Scene.GetCamera().position + m_Scene.GetCamera().GetTarget();
+    Vector ray_direction = image_point -  m_Scene.GetCamera().position;
+    return Ray(m_Scene.GetCamera().position, ray_direction, image_point);
+  }
+
+
 public:
   //- Scene Variable for the Scene Definition - 
   Scene m_Scene;
@@ -35,7 +87,7 @@ public:
   Vector CalculatePixel (int screenX, int screenY)
   {
 /*
-        -- How to Implement a Ray Tracer --
+                -- How to Implement a Ray Tracer --
 
     This computed pixel will take into account the camera and the scene
       and return a Vector of <Red, Green, Blue>, each component ranging from 0.0 to 1.0
@@ -66,6 +118,7 @@ public:
       will get you a final color that returns to the eye at this point.
 */
 
+    std::cout << ComputeStartRay(screenX,screenY).ToString()<<"\n";
     if ((screenX < 0 || screenX > WINDOW_WIDTH - 1) ||
       (screenY < 0 || screenY > WINDOW_HEIGHT - 1))
     {

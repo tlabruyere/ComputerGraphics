@@ -25,7 +25,7 @@ This class renders the scene when the RayTrace class isn't rendering
 */
 class NormalRenderer
 {
-  /* - Scene Variable Pointer for the Scene Definition - */
+  // - Scene Variable Pointer for the Scene Definition - 
   Scene *m_pScene;
 
   // - SetRenderStates - Sets the OpenGL Render States

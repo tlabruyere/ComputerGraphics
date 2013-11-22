@@ -101,6 +101,12 @@ public:
   {
     return Vector (x * scaleVector.x, y * scaleVector.y, z * scaleVector.z, w * scaleVector.w);
   }
+  
+/*  Vector operator * (float scalar)
+  {
+    return Vector (x * scalar, y * scalar, z * scalar, w * scalar);
+  }
+  */
 };
 
 /*
