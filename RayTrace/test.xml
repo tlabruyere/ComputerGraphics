@@ -10,11 +10,17 @@
   </background>
 
   <!-- Camera Description -->
-  <camera fieldOfView="45.0" nearClip="0.1" farClip="100.0">
+  <!--camera fieldOfView="45.0" nearClip="0.1" farClip="100.0">
     <position x="2.0" y="2.0" z="5.0"/>
     <target x="1.0" y="1.0" z="-1.0"/>
     <up x="0.0" y="1.0" z="0.0"/>
+  </camera-->
+  <camera fieldOfView="45.0" nearClip="0.1" farClip="100.0">
+    <position x="0.0" y="0.0" z="5.0"/>
+    <target x="0.0" y="0.0" z="0.0"/>
+    <up x="0.0" y="1.0" z="0.0"/>
   </camera>
+
 
   <!-- Light Sources Collection -->
   <light_list>
@@ -57,55 +63,60 @@
   <!-- List of Scene Objects -->
   <object_list>
     <!-- Sphere Object -->
-    <sphere name="Sphere" material="Red" radius="1.0">
+    <!--sphere name="Sphere" material="Red" radius="1.0">
       <scale x="1.0" y="1.0" z="1.0"/>
       <rotation x="0.0" y="0.0" z="0.0"/>
       <position x="0.0" y="0.0" z="0.0"/>
 
       <center x="3.0" y="3.0" z="-5.0"/>
-    </sphere>
-
-    <!-- Triangle Object -->
-    <triangle name="Triangle">
+    </sphere-->
+    <sphere name="Sphere" material="Red" radius="2.0">
       <scale x="1.0" y="1.0" z="1.0"/>
       <rotation x="0.0" y="0.0" z="0.0"/>
       <position x="0.0" y="0.0" z="0.0"/>
 
-      <!-- First Vertex -->
+      <center x="0.0" y="0.0" z="0.0"/>
+    </sphere>
+
+
+    <!-- Triangle Object -->
+    <!--triangle name="Triangle">
+      <scale x="1.0" y="1.0" z="1.0"/>
+      <rotation x="0.0" y="0.0" z="0.0"/>
+      <position x="0.0" y="0.0" z="0.0"/>
+
       <vertex index="0" material="Purple">
         <position x="-2.0" y="-2.0" z="-8.0"/>
         <normal x="-1.0" y="0.0" z="1.0"/>
         <texture u="0.0" v="0.0"/>
       </vertex>
 
-      <!-- Second Vertex -->
       <vertex index="1" material="Red">
         <position x="2.0" y="-2.0" z="-8.0"/>
         <normal x="1.0" y="0.0" z="1.0"/>
         <texture u="0.0" v="0.0"/>
       </vertex>
 
-      <!-- Third Vertex -->
       <vertex index="2" material="White">
         <position x="0.0" y="2.0" z="-8.0"/>
         <normal x="0.0" y="1.0" z="1.0"/>
         <texture u="0.0" v="0.0"/>
       </vertex>
-    </triangle>
+    </triangle-->
 
     <!-- External Model Object [Collection of Triangles] -->
     <!-- Model in 3DS File Format -->
-    <model filename="objects/cube.3ds" name="cube"  material="Purple">
+    <!--model filename="objects/cube.3ds" name="cube"  material="Purple">
       <scale x="1.0" y="1.0" z="1.0"/>
       <rotation x="0.0" y="0.0" z="0.0"/>
       <position x="0.0" y="0.0" z="0.0"/>
-    </model>
+    </model-->
     <!-- Model in OBJ File Format -->
-    <model filename="objects/cube.obj" name="cube"  material="White">
+    <!--model filename="objects/cube.obj" name="cube"  material="White">
       <scale x="1.0" y="1.0" z="1.0"/>
       <rotation x="0.0" y="0.0" z="0.0"/>
       <position x="0.0" y="0.0" z="0.0"/>
-    </model>
+    </model-->
   </object_list>
 
   <!-- End of Scene -->

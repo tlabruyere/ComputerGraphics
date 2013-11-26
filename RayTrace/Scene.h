@@ -47,8 +47,10 @@ vertices[n] = ((SceneTriangle)tempObject).vertex[n];
 #include <string>
 #include <vector>
 #include <fstream>
+#include <iostream>
 
 #include "Utils.h"
+#include "Ray.h"
 
 // XML Parser by Frank Vanden Berghen
 // Available: http://iridia.ulb.ac.be/~fvandenb/tools/xmlParser.html
@@ -124,7 +126,61 @@ public:
   {}
 
   ~SceneMaterial (void)
+  {}
+};
+
+class SceneMaterialMgr
+{
+private:
+  std::vector<SceneMaterial> m_MaterialList;
+  SceneMaterialMgr(){}
+  SceneMaterialMgr(SceneMaterialMgr const&);
+  void operator=(SceneMaterialMgr const&);
+
+public:
+  ~SceneMaterialMgr(){}
+  static SceneMaterialMgr& GetInstance()
   {
+    static SceneMaterialMgr _sceneMaterialMgr;
+    return _sceneMaterialMgr;
+  }
+  // - GetMaterial - Returns the nth SceneMaterial
+  SceneMaterial GetMaterial (int matIndex) { return m_MaterialList[matIndex]; }
+  SceneMaterial GetMaterial (std::string matName)
+  {
+    unsigned int numMats = (unsigned int)m_MaterialList.size ();
+    for (unsigned int n = 0; n < numMats; n++)
+    {
+      if (matName == m_MaterialList[n].name)
+        return m_MaterialList[n];
+    }
+    return SceneMaterial ();
+  }
+  unsigned int size()
+  {
+    return m_MaterialList.size();
+  }
+  bool Load(XMLNode tempNode)
+  {
+    unsigned int numMaterials = tempNode.nChildNode ("material");
+    for (unsigned int n = 0; n < numMaterials; n++)
+    {
+      XMLNode tempMaterialNode = tempNode.getChildNode("material", n);
+      if (tempMaterialNode.isEmpty ())
+        return false;
+      SceneMaterial tempMaterial;
+      tempMaterial.name = CHECK_ATTR(tempMaterialNode.getAttribute("name"));
+      tempMaterial.texture = CHECK_ATTR(tempMaterialNode.getChildNode("texture").getAttribute("filename"));
+      tempMaterial.diffuse = Tools::ParseColor (tempMaterialNode.getChildNode("diffuse"));
+      tempMaterial.specular = Tools::ParseColor (tempMaterialNode.getChildNode("specular"));
+      tempMaterial.shininess = atof(CHECK_ATTR(tempMaterialNode.getChildNode("specular").getAttribute("shininess")));
+      tempMaterial.transparent = Tools::ParseColor (tempMaterialNode.getChildNode("transparent"));
+      tempMaterial.reflective = Tools::ParseColor (tempMaterialNode.getChildNode("reflective"));
+      tempMaterial.refraction_index = Tools::ParseColor (tempMaterialNode.getChildNode("refraction_index"));
+
+      m_MaterialList.push_back (tempMaterial);
+    }
+    return true;
   }
 };
 
@@ -149,6 +205,17 @@ public:
   bool IsSphere (void) { return (type == SceneObjectType::Sphere); }
   bool IsTriangle (void) { return (type == SceneObjectType::Triangle); }
   bool IsModel (void) { return (type == SceneObjectType::Model); }
+
+  /* 
+   * Tests for intersection between Ray and object
+   * If intersection returns the t value in the parametric equation P(x) = Po + t*Pd so the point intersection can be computed
+   * else return a negitive number classifying there is no intersection in the direction of the ray
+   */
+  virtual float IntersectionTest(Ray pRay) = 0;
+  virtual Vector GetColor()
+  {
+    return Vector(0.0,0.0,0.0);
+  }
 };
 
 /*
@@ -166,6 +233,33 @@ public:
   // -- Constructors & Destructors --
   SceneSphere (void) : SceneObject ("Sphere", SceneObjectType::Sphere) {}
   SceneSphere (std::string nm) : SceneObject (nm, SceneObjectType::Sphere) {}
+
+
+  float IntersectionTest(Ray pRay)
+  {
+    float t_return = -1.0;
+    //Vector sphereCenMinusRayOrg = center - pRay.GetOrigin();
+    Vector sphereCenMinusRayOrg = pRay.GetOrigin() - center;
+    float A = pRay.GetDirection().Dot( pRay.GetDirection());
+    float B = (sphereCenMinusRayOrg ).Dot(pRay.GetDirection() * 2.0);
+    float C = (sphereCenMinusRayOrg).Dot(sphereCenMinusRayOrg) - (radius*radius);
+    
+    float imaginaryTest = B*B - 4.0 * A * C;
+    if(imaginaryTest > 0.0) // if imaginary, there is no value where the ray intersects the sphere
+    {
+      float t_minus = (-B - sqrt(B*B - 4.0 * A * C)) / 2*A; 
+      t_return =  (-B + sqrt(B*B - 4.0 * A * C)) / 2*A; 
+      if( t_minus < t_return)
+        t_return = t_minus;
+    } 
+    return t_return;
+  }
+
+  Vector GetColor()
+  {
+    return Vector(0.0,0.0,0.0);
+  }
+
 };
 
 /*
@@ -184,6 +278,17 @@ public:
   // -- Constructors & Destructors --
   SceneTriangle (void) : SceneObject ("Triangle", SceneObjectType::Triangle) {}
   SceneTriangle (std::string nm) : SceneObject (nm, SceneObjectType::Triangle) {}
+  float IntersectionTest(Ray pRay)
+  {
+    std::cout<< "Triangle has not implemented this method" <<std::endl;
+    return 0.0;
+  }
+
+  Vector GetColor()
+  {
+    return Vector(0.0,0.0,0.0);
+  }
+
 };
 
 /*
@@ -208,6 +313,19 @@ public:
 
   // - GetTriangle - Gets the nth SceneTriangle
   SceneTriangle *GetTriangle (int triIndex) { return &triangleList[triIndex]; }
+ 
+  float IntersectionTest(Ray pRay)
+  {
+    std::cout<< "SceneModel has not implemented this method" <<std::endl;
+    return 0.0;
+  }
+
+  Vector GetColor()
+  {
+    return Vector(0.0,0.0,0.0);
+  }
+
+
 };
 
 /*
@@ -220,19 +338,9 @@ class Scene
   std::string m_Desc, m_Author;
   SceneBackground m_Background;
   std::vector<SceneLight> m_LightList;
-  std::vector<SceneMaterial> m_MaterialList;
   std::vector<SceneObject *> m_ObjectList;
 
   // - Private utility Functions used by Load () -
-  Vector ParseColor (XMLNode node)
-  {
-    if (node.isEmpty ())
-      return Vector (0.0f, 0.0f, 0.0f);
-    return Vector (atof(node.getAttribute("red")), 
-      atof(node.getAttribute("green")),
-      atof(node.getAttribute("blue")));
-  }
-
   Vector ParseXYZ (XMLNode node)
   {
     if (node.isEmpty ())
@@ -248,9 +356,9 @@ class Scene
 public:
   Camera m_Camera;
 
-
   // -- Constructors & Destructors --
-  Scene (void) {}
+  Scene (void) 
+  {}
   ~Scene (void)
   {
     // Free the memory allocated from the objects
@@ -295,34 +403,21 @@ public:
   SceneLight GetLight (int lightIndex) { return m_LightList[lightIndex]; }
 
   // - GetNumMaterials - Returns the number of materials in the scene
-  unsigned int GetNumMaterials (void) { return (unsigned int)m_MaterialList.size (); }
-
-  // - GetMaterial - Returns the nth SceneMaterial
-  SceneMaterial GetMaterial (int matIndex) { return m_MaterialList[matIndex]; }
-  SceneMaterial GetMaterial (std::string matName)
+  unsigned int GetNumMaterials (void)
   {
-    unsigned int numMats = (unsigned int)m_MaterialList.size ();
-    for (unsigned int n = 0; n < numMats; n++)
-    {
-      if (matName == m_MaterialList[n].name)
-        return m_MaterialList[n];
-    }
-
-    return SceneMaterial ();
+    SceneMaterialMgr& m_MaterialList = SceneMaterialMgr::GetInstance();
+    return (unsigned int)m_MaterialList.size (); 
   }
 
   // - GetNumObjects - Returns the number of objects in the scene
   unsigned int GetNumObjects (void) { return (unsigned int)m_ObjectList.size (); }
 
   // - GetObject - Returns the nth object [NOTE: The Object will need to be type-casted afterwards]
-  SceneObject *GetObject (int objIndex) { return m_ObjectList[objIndex]; }
+  SceneObject* getObject (int objIndex) { return m_ObjectList[objIndex]; }
 
   // - GetCamera - Returns the camera class
   Camera GetCamera (void) { return m_Camera; }
 };
-
-
-
 
 bool Scene::Load (char *filename)
 {
@@ -344,8 +439,8 @@ bool Scene::Load (char *filename)
   tempNode = sceneXML.getChildNode("background");
   if (tempNode.isEmpty ())
     return false;
-  m_Background.color = ParseColor (tempNode.getChildNode("color"));
-  m_Background.ambientLight = ParseColor (tempNode.getChildNode("ambientLight"));
+  m_Background.color = Tools::ParseColor (tempNode.getChildNode("color"));
+  m_Background.ambientLight = Tools::ParseColor (tempNode.getChildNode("ambientLight"));
 
   // Load the Lights
   printf ("Loading Lights...\n");
@@ -359,7 +454,7 @@ bool Scene::Load (char *filename)
       if (tempLightNode.isEmpty ())
         return false;
       SceneLight tempLight;
-      tempLight.color = ParseColor (tempLightNode.getChildNode("color"));
+      tempLight.color = Tools::ParseColor (tempLightNode.getChildNode("color"));
       tempLight.attenuationConstant = atof(CHECK_ATTR(tempLightNode.getChildNode("attenuation").getAttribute ("constant")));
       tempLight.attenuationLinear = atof(CHECK_ATTR(tempLightNode.getChildNode("attenuation").getAttribute ("linear")));
       tempLight.attenuationQuadratic = atof(CHECK_ATTR(tempLightNode.getChildNode("attenuation").getAttribute ("quadratic")));
@@ -373,24 +468,9 @@ bool Scene::Load (char *filename)
   tempNode = sceneXML.getChildNode("material_list");
   if (!tempNode.isEmpty ())
   {
-    unsigned int numMaterials = tempNode.nChildNode ("material");
-    for (unsigned int n = 0; n < numMaterials; n++)
-    {
-      XMLNode tempMaterialNode = tempNode.getChildNode("material", n);
-      if (tempMaterialNode.isEmpty ())
-        return false;
-      SceneMaterial tempMaterial;
-      tempMaterial.name = CHECK_ATTR(tempMaterialNode.getAttribute("name"));
-      tempMaterial.texture = CHECK_ATTR(tempMaterialNode.getChildNode("texture").getAttribute("filename"));
-      tempMaterial.diffuse = ParseColor (tempMaterialNode.getChildNode("diffuse"));
-      tempMaterial.specular = ParseColor (tempMaterialNode.getChildNode("specular"));
-      tempMaterial.shininess = atof(CHECK_ATTR(tempMaterialNode.getChildNode("specular").getAttribute("shininess")));
-      tempMaterial.transparent = ParseColor (tempMaterialNode.getChildNode("transparent"));
-      tempMaterial.reflective = ParseColor (tempMaterialNode.getChildNode("reflective"));
-      tempMaterial.refraction_index = ParseColor (tempMaterialNode.getChildNode("refraction_index"));
-
-      m_MaterialList.push_back (tempMaterial);
-    }
+    SceneMaterialMgr& materialMgr = SceneMaterialMgr::GetInstance();
+    if(!materialMgr.Load(tempNode))
+      return false;
   }
 
   // Load the Objects

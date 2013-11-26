@@ -138,7 +138,7 @@ void doIdle()
       g_Y++;
 
       //You can uncomment the next line to see the raytrace update each step
-      //glutPostRedisplay();
+      glutPostRedisplay();
     }
 
     // Check for the end of the screen

@@ -64,6 +64,7 @@
   <ItemGroup>
     <ClInclude Include="3ds.h" />
     <ClInclude Include="NormalRenderer.h" />
+    <ClInclude Include="Ray.h" />
     <ClInclude Include="RayTrace.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Utils.h" />
@@ -75,7 +76,9 @@
     <ClCompile Include="xmlParser.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="test.xml" />
+    <Xml Include="test.xml">
+      <SubType>Designer</SubType>
+    </Xml>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

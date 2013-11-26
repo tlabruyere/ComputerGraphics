@@ -20,6 +20,7 @@ Camera Class
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "xmlParser.h"
 
 /*
 Vector Class - A float triplet class with several vector-operation functions
@@ -403,4 +404,16 @@ Vector Vector::Cross (Vector vec2)
   return crossVec;
 }
 
+class Tools
+{
+public:
+  static Vector ParseColor (XMLNode node)
+  {
+    if (node.isEmpty ())
+      return Vector (0.0f, 0.0f, 0.0f);
+    return Vector (atof(node.getAttribute("red")), 
+      atof(node.getAttribute("green")),
+      atof(node.getAttribute("blue")));
+  }
+};
 #endif // UTILS_H

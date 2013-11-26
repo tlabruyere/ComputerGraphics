@@ -111,9 +111,10 @@ public:
 
       // Get the Objects and Render them
       unsigned int numObjs = m_pScene->GetNumObjects ();
+      SceneMaterialMgr& materialMgr =  SceneMaterialMgr::GetInstance();
       for (unsigned int n = 0; n < numObjs; n++)
       {
-        SceneObject *sceneObj = m_pScene->GetObject (n);
+        SceneObject *sceneObj = m_pScene->getObject (n);
 
         // Store the current Transformation Matrix
         glPushMatrix ();
@@ -121,8 +122,8 @@ public:
         // Is is a Sphere?
         if (sceneObj->IsSphere ())
         {
-          // Set the Material
-          SceneMaterial sceneMat = m_pScene->GetMaterial (((SceneSphere *)sceneObj)->material);
+          // Set the Materiali
+          SceneMaterial sceneMat = materialMgr.GetMaterial(((SceneSphere *)sceneObj)->material);
           glColor3fv ((GLfloat *)&sceneMat.diffuse);
           glMaterialfv (GL_FRONT_AND_BACK, GL_SPECULAR, (GLfloat *)&sceneMat.specular);
           glMaterialf(GL_FRONT, GL_SHININESS, sceneMat.shininess);
@@ -151,26 +152,26 @@ public:
           glScalef (((SceneTriangle *)sceneObj)->scale.x, ((SceneTriangle *)sceneObj)->scale.y, ((SceneTriangle *)sceneObj)->scale.z);
 
           // Specular Properties set before glBegin ()
-          sceneMat = m_pScene->GetMaterial (((SceneTriangle *)sceneObj)->material[0]);
+          sceneMat = materialMgr.GetMaterial (((SceneTriangle *)sceneObj)->material[0]);
           glMaterialfv (GL_FRONT_AND_BACK, GL_SPECULAR, (GLfloat *)&sceneMat.specular);
           glMaterialf(GL_FRONT, GL_SHININESS, sceneMat.shininess);
 
           // Draw the Triangle and set materials for each vertex as well
           glBegin (GL_POLYGON);
 
-          sceneMat = m_pScene->GetMaterial (((SceneTriangle *)sceneObj)->material[0]);
+          sceneMat = materialMgr.GetMaterial (((SceneTriangle *)sceneObj)->material[0]);
           glColor3fv ((GLfloat *)&sceneMat.diffuse);
           glTexCoord2f (((SceneTriangle *)sceneObj)->u[0], ((SceneTriangle *)sceneObj)->v[0]);
           glNormal3f (((SceneTriangle *)sceneObj)->normal[0].x, ((SceneTriangle *)sceneObj)->normal[0].y, ((SceneTriangle *)sceneObj)->normal[0].z);
           glVertex3f (((SceneTriangle *)sceneObj)->vertex[0].x, ((SceneTriangle *)sceneObj)->vertex[0].y, ((SceneTriangle *)sceneObj)->vertex[0].z);
 
-          sceneMat = m_pScene->GetMaterial (((SceneTriangle *)sceneObj)->material[1]);
+          sceneMat = materialMgr.GetMaterial (((SceneTriangle *)sceneObj)->material[1]);
           glColor3fv ((GLfloat *)&sceneMat.diffuse);
           glTexCoord2f (((SceneTriangle *)sceneObj)->u[1], ((SceneTriangle *)sceneObj)->v[1]);
           glNormal3f (((SceneTriangle *)sceneObj)->normal[1].x, ((SceneTriangle *)sceneObj)->normal[1].y, ((SceneTriangle *)sceneObj)->normal[1].z);
           glVertex3f (((SceneTriangle *)sceneObj)->vertex[1].x, ((SceneTriangle *)sceneObj)->vertex[1].y, ((SceneTriangle *)sceneObj)->vertex[1].z);
 
-          sceneMat = m_pScene->GetMaterial (((SceneTriangle *)sceneObj)->material[2]);
+          sceneMat = materialMgr.GetMaterial (((SceneTriangle *)sceneObj)->material[2]);
           glColor3fv ((GLfloat *)&sceneMat.diffuse);
           glTexCoord2f (((SceneTriangle *)sceneObj)->u[2], ((SceneTriangle *)sceneObj)->v[2]);
           glNormal3f (((SceneTriangle *)sceneObj)->normal[2].x, ((SceneTriangle *)sceneObj)->normal[2].y, ((SceneTriangle *)sceneObj)->normal[2].z);
@@ -189,7 +190,7 @@ public:
           glScalef (((SceneModel *)sceneObj)->scale.x, ((SceneModel *)sceneObj)->scale.y, ((SceneModel *)sceneObj)->scale.z);
 
           // Set the Material (For a model, the material is uniform throughout all triangles
-          SceneMaterial sceneMat = m_pScene->GetMaterial (((SceneModel *)sceneObj)->GetTriangle (0)->material[0]);
+          SceneMaterial sceneMat = materialMgr.GetMaterial (((SceneModel *)sceneObj)->GetTriangle (0)->material[0]);
           glColor3fv ((GLfloat *)&sceneMat.diffuse);
           glMaterialfv (GL_FRONT_AND_BACK, GL_SPECULAR, (GLfloat *)&sceneMat.specular);
           glMaterialf(GL_FRONT, GL_SHININESS, sceneMat.shininess);
