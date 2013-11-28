@@ -415,5 +415,12 @@ public:
       atof(node.getAttribute("green")),
       atof(node.getAttribute("blue")));
   }
+  
+  static Vector GetPhongColor()
+  {
+
+  }
+
+  static Vector Re
 };
 #endif // UTILS_H

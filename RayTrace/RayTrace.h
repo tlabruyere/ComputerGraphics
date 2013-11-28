@@ -78,18 +78,39 @@ private:
         closestObj = i;
       }
     }
-    if(closestDist < 0.0)
+    if(closestDist>0.0)
     {
-      return color;
+      color = AccLightSource(pRay, closestObj, closestDist);
     }
-    else 
-    {
-//      return m_Scene.getObject(i)->get
-      return Vector(0.0,0.0,0.0);
-    }
-    
-
+    return  color;
+  
   }
+
+  Vector AccLightSource(Ray pRay, int pObjIdx, float pIntersectionTime )
+  {
+    Vector color;//= m_Scene.GetBackground().ambientLight;
+    for(int lightIdx = 0; lightIdx< m_Scene.GetNumLights();lightIdx++)
+    {
+      Ray point2Light(pRay.GetPoint(pIntersectionTime),m_Scene.GetLight(lightIdx).position - pRay.GetPoint(pIntersectionTime)); 
+      bool objIntersection = false;
+      for(int objIdx = 0; objIdx < m_Scene.GetNumObjects(); objIdx++)
+      {
+        float t = m_Scene.getObject(objIdx)->IntersectionTest( point2Light);
+        if(t>0) // if t is found, then there is an object blocking the light
+        {
+          objIntersection = true;
+          break;
+        }
+      }
+      if(!objIntersection)
+      {
+        color = color + m_Scene.getObject(pObjIdx)->GetColor(m_Scene.GetLight(lightIdx), pRay.GetPoint(pIntersectionTime), pRay);
+      }
+    }
+    return color;
+  }
+   
+
 
 public:
   //- Scene Variable for the Scene Definition - 

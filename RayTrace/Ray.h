@@ -33,6 +33,10 @@ public:
     return str.str();
   }
 
+  Vector GetPoint(float t)
+  {
+    return _start + _direction * t;
+  }
   Vector GetOrigin(){return _start;}
   Vector GetDirection(){return _direction;}
 

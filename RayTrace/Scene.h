@@ -59,6 +59,7 @@ vertices[n] = ((SceneTriangle)tempObject).vertex[n];
 // 3DS File by bkenwright@xbdev.net
 //    Updated by Raphael Mun
 #include "3ds.h"
+#include <algorithm>
 
 // Max Line Length for OBJ File Loading
 #define MAX_LINE_LEN 1000
@@ -102,6 +103,9 @@ public:
   float attenuationConstant, attenuationLinear, attenuationQuadratic;
   Vector color;
   Vector position;
+  Vector ambiant;
+  Vector diffuse;
+  Vector specular;
 };
 
 /*
@@ -212,7 +216,7 @@ public:
    * else return a negitive number classifying there is no intersection in the direction of the ray
    */
   virtual float IntersectionTest(Ray pRay) = 0;
-  virtual Vector GetColor()
+  virtual Vector GetColor(SceneLight pLight, Vector pSurfPt, Ray lookVector)
   {
     return Vector(0.0,0.0,0.0);
   }
@@ -234,7 +238,6 @@ public:
   SceneSphere (void) : SceneObject ("Sphere", SceneObjectType::Sphere) {}
   SceneSphere (std::string nm) : SceneObject (nm, SceneObjectType::Sphere) {}
 
-
   float IntersectionTest(Ray pRay)
   {
     float t_return = -1.0;
@@ -255,9 +258,27 @@ public:
     return t_return;
   }
 
-  Vector GetColor()
+  Vector GetColor(SceneLight pLight, Vector pSurfPt, Ray lookVector)
   {
-    return Vector(0.0,0.0,0.0);
+    Vector ptNormal = (pSurfPt - center).Normalize();
+    Vector ReflectionVec = (ptNormal * 2.0 * (max(lookVector.GetDirection().Dot(ptNormal),0.0)) - lookVector.GetDirection()).Normalize();
+    Vector lightVector = (pLight.position-pSurfPt).Normalize();
+    SceneMaterialMgr& materialMgr = SceneMaterialMgr::GetInstance();
+
+//    Vector ambiant = pLight.color;// * materialMgr.GetMaterial(material).
+
+    Vector diffuse = materialMgr.GetMaterial(material).diffuse 
+      * pLight.color
+      * max(lightVector.Dot(ptNormal), 0.0); 
+   
+    Vector specular = materialMgr.GetMaterial(material).specular 
+      * pLight.color 
+      * pow(max(lookVector.GetDirection().Dot(ReflectionVec),0.0),materialMgr.GetMaterial(material).shininess);
+
+    Vector color = diffuse +specular;
+
+    return color;
+//    return Vector(0.0,0.0,0.0);
   }
 
 };
@@ -284,7 +305,7 @@ public:
     return 0.0;
   }
 
-  Vector GetColor()
+  Vector GetColor(SceneLight pLight, Vector pSurfPt, Ray lookVector)
   {
     return Vector(0.0,0.0,0.0);
   }
@@ -320,7 +341,7 @@ public:
     return 0.0;
   }
 
-  Vector GetColor()
+  Vector GetColor(SceneLight pLight, Vector pSurfPt, Ray lookVector)
   {
     return Vector(0.0,0.0,0.0);
   }
@@ -458,6 +479,9 @@ bool Scene::Load (char *filename)
       tempLight.attenuationConstant = atof(CHECK_ATTR(tempLightNode.getChildNode("attenuation").getAttribute ("constant")));
       tempLight.attenuationLinear = atof(CHECK_ATTR(tempLightNode.getChildNode("attenuation").getAttribute ("linear")));
       tempLight.attenuationQuadratic = atof(CHECK_ATTR(tempLightNode.getChildNode("attenuation").getAttribute ("quadratic")));
+      tempLight.ambiant = Tools::ParseColor (tempLightNode.getChildNode("ambiant"));
+      tempLight.diffuse = Tools::ParseColor (tempLightNode.getChildNode("diffuse"));
+      tempLight.specular = Tools::ParseColor (tempLightNode.getChildNode("specular"));
       tempLight.position = ParseXYZ (tempLightNode.getChildNode("position"));
       m_LightList.push_back (tempLight);
     }
