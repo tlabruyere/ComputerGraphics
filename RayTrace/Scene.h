@@ -51,6 +51,8 @@ vertices[n] = ((SceneTriangle)tempObject).vertex[n];
 
 #include "Utils.h"
 #include "Ray.h"
+#include "SceneMaterial.h"
+#include "SceneMaterialMgr.h"
 
 // XML Parser by Frank Vanden Berghen
 // Available: http://iridia.ulb.ac.be/~fvandenb/tools/xmlParser.html
@@ -92,101 +94,6 @@ public:
   Vector ambientLight;
 };
 
-/*
-SceneLight Class - The light properties of a single light-source in a ray-trace scene
-
-The Scene class holds a list of these
-*/
-class SceneLight
-{
-public:
-  float attenuationConstant, attenuationLinear, attenuationQuadratic;
-  Vector color;
-  Vector position;
-  Vector ambiant;
-  Vector diffuse;
-  Vector specular;
-};
-
-/*
-SceneMaterial Class - The material properties used in a ray-trace scene
-
-The Scene class holds a list of material
-*/
-class SceneMaterial
-{
-public:
-  std::string name;
-  std::string texture;
-  Vector diffuse;
-  Vector specular;
-  float shininess;
-  Vector transparent;
-  Vector reflective;
-  Vector refraction_index;
-
-  // -- Constructors & Destructors --
-  SceneMaterial (void)
-  {}
-
-  ~SceneMaterial (void)
-  {}
-};
-
-class SceneMaterialMgr
-{
-private:
-  std::vector<SceneMaterial> m_MaterialList;
-  SceneMaterialMgr(){}
-  SceneMaterialMgr(SceneMaterialMgr const&);
-  void operator=(SceneMaterialMgr const&);
-
-public:
-  ~SceneMaterialMgr(){}
-  static SceneMaterialMgr& GetInstance()
-  {
-    static SceneMaterialMgr _sceneMaterialMgr;
-    return _sceneMaterialMgr;
-  }
-  // - GetMaterial - Returns the nth SceneMaterial
-  SceneMaterial GetMaterial (int matIndex) { return m_MaterialList[matIndex]; }
-  SceneMaterial GetMaterial (std::string matName)
-  {
-    unsigned int numMats = (unsigned int)m_MaterialList.size ();
-    for (unsigned int n = 0; n < numMats; n++)
-    {
-      if (matName == m_MaterialList[n].name)
-        return m_MaterialList[n];
-    }
-    return SceneMaterial ();
-  }
-  unsigned int size()
-  {
-    return m_MaterialList.size();
-  }
-  bool Load(XMLNode tempNode)
-  {
-    unsigned int numMaterials = tempNode.nChildNode ("material");
-    for (unsigned int n = 0; n < numMaterials; n++)
-    {
-      XMLNode tempMaterialNode = tempNode.getChildNode("material", n);
-      if (tempMaterialNode.isEmpty ())
-        return false;
-      SceneMaterial tempMaterial;
-      tempMaterial.name = CHECK_ATTR(tempMaterialNode.getAttribute("name"));
-      tempMaterial.texture = CHECK_ATTR(tempMaterialNode.getChildNode("texture").getAttribute("filename"));
-      tempMaterial.diffuse = Tools::ParseColor (tempMaterialNode.getChildNode("diffuse"));
-      tempMaterial.specular = Tools::ParseColor (tempMaterialNode.getChildNode("specular"));
-      tempMaterial.shininess = atof(CHECK_ATTR(tempMaterialNode.getChildNode("specular").getAttribute("shininess")));
-      tempMaterial.transparent = Tools::ParseColor (tempMaterialNode.getChildNode("transparent"));
-      tempMaterial.reflective = Tools::ParseColor (tempMaterialNode.getChildNode("reflective"));
-      tempMaterial.refraction_index = Tools::ParseColor (tempMaterialNode.getChildNode("refraction_index"));
-
-      m_MaterialList.push_back (tempMaterial);
-    }
-    return true;
-  }
-};
 
 /*
 SceneObject Class - A base object class that defines the common features of all objects
@@ -252,7 +159,7 @@ public:
     {
       float t_minus = (-B - sqrt(B*B - 4.0 * A * C)) / 2*A; 
       t_return =  (-B + sqrt(B*B - 4.0 * A * C)) / 2*A; 
-      if( t_minus < t_return)
+      if( t_minus >= 0.0 && t_minus < t_return)
         t_return = t_minus;
     } 
     return t_return;
@@ -265,20 +172,14 @@ public:
     Vector lightVector = (pLight.position-pSurfPt).Normalize();
     SceneMaterialMgr& materialMgr = SceneMaterialMgr::GetInstance();
 
-//    Vector ambiant = pLight.color;// * materialMgr.GetMaterial(material).
+    return Tools::GetPhongColor(
+      materialMgr.GetMaterial( material), 
+      pLight, 
+      ptNormal, 
+      Tools::Reflection(lookVector.GetDirection(),ptNormal),
+      lightVector,
+      lookVector.GetDirection());
 
-    Vector diffuse = materialMgr.GetMaterial(material).diffuse 
-      * pLight.color
-      * max(lightVector.Dot(ptNormal), 0.0); 
-   
-    Vector specular = materialMgr.GetMaterial(material).specular 
-      * pLight.color 
-      * pow(max(lookVector.GetDirection().Dot(ReflectionVec),0.0),materialMgr.GetMaterial(material).shininess);
-
-    Vector color = diffuse +specular;
-
-    return color;
-//    return Vector(0.0,0.0,0.0);
   }
 
 };
@@ -301,8 +202,32 @@ public:
   SceneTriangle (std::string nm) : SceneObject (nm, SceneObjectType::Triangle) {}
   float IntersectionTest(Ray pRay)
   {
-    std::cout<< "Triangle has not implemented this method" <<std::endl;
-    return 0.0;
+//    std::cout<< "Triangle has not implemented this method" <<std::endl;
+    float t = -1.0;
+    float epslion = 0.0000001;
+    // Get normal for plane
+    Vector planeNormal = (vertex[1]-vertex[0]).Cross(vertex[2] - vertex[0]);
+
+    float t_potential = (planeNormal.Dot(vertex[0] - pRay.GetOrigin())) / (planeNormal.Dot( pRay.GetDirection()));
+    if(t_potential > epslion)
+    {
+      //Compute whether point is within the bounds of the triangle
+      Vector pointOfIntersection = pRay.GetPoint(t_potential);
+
+      float totalAreaOfTriangle = Tools::AreaOfTriangle( vertex[0],vertex[1],vertex[2]);
+
+      float ptTriangle0 = Tools::AreaOfTriangle( pointOfIntersection,vertex[1],vertex[2]);
+      float ptTriangle1 = Tools::AreaOfTriangle( vertex[0], pointOfIntersection,vertex[2]);
+      float ptTriangle2 = Tools::AreaOfTriangle( vertex[0],vertex[1], pointOfIntersection);
+
+      float pointArea = ptTriangle0 + ptTriangle1 + ptTriangle2;
+
+      if(abs( totalAreaOfTriangle - pointArea) < epslion && abs( totalAreaOfTriangle - pointArea) > -epslion)
+	t = t_potential;
+    }
+
+
+    return t;
   }
 
   Vector GetColor(SceneLight pLight, Vector pSurfPt, Ray lookVector)
