@@ -37,7 +37,8 @@ private:
   Ray ComputeStartRay( int screenX, int screenY)
   {
     Vector lookVector = (m_Scene.GetCamera().GetTarget() - m_Scene.GetCamera().position).Normalize(); 
-    Vector camera_left = lookVector.Cross( m_Scene.GetCamera().GetUp()).Normalize() * -1.0;
+    Vector camera_left = m_Scene.GetCamera().GetUp().Cross(lookVector).Normalize() ;
+    Vector camera_right = lookVector.Cross(m_Scene.GetCamera().GetUp()).Normalize() ;
 
     float H = 2.0 * m_Scene.GetCamera().GetNearClip()
       * tan((m_Scene.GetCamera().GetFOV()/2.0)
@@ -47,15 +48,16 @@ private:
     float deltaScreenX = (W/WINDOW_WIDTH) * screenX;
     float deltaScreenY = (H/WINDOW_HEIGHT) * screenY;
 
-    float WOver2 = (W/2.0  - deltaScreenX);
-    float HOver2 = (H/2.0 - deltaScreenY);
+    float WOver2 = (deltaScreenX - W/2.0 );
+    float HOver2 = (deltaScreenY - H/2.0 );
 
-    Vector lookat = m_Scene.GetCamera().GetPosition() + lookVector
-      * m_Scene.GetCamera().GetNearClip();
+    Vector centerOfImagePlane = m_Scene.GetCamera().GetPosition() 
+      + lookVector * m_Scene.GetCamera().GetNearClip();
 
-    Vector image_point = lookat 
+    Vector image_point = centerOfImagePlane 
       + (m_Scene.GetCamera().GetUp() * HOver2)
       + (camera_left * WOver2);
+
     Vector ray_direction = image_point -  m_Scene.GetCamera().position;
     return Ray(m_Scene.GetCamera().position, ray_direction, image_point);
   }
@@ -67,18 +69,18 @@ private:
     {
       return color;
     }
-    int closestObj = 0;
+    int closestObj = -1;
     float closestDist = FLT_MAX;
     for(int i = 0; i<m_Scene.GetNumObjects(); i++)
     {
       float t = m_Scene.getObject(i)->IntersectionTest(pRay);
-      if(t < closestDist)
+      if( t>=0.0 && t < closestDist)
       {
         closestDist = t;
         closestObj = i;
       }
     }
-    if(closestDist>0.0)
+    if(closestObj >= 0)
     {
       color = AccLightSource(pRay, closestObj, closestDist);
     }
@@ -91,7 +93,8 @@ private:
     Vector color;//= m_Scene.GetBackground().ambientLight;
     for(int lightIdx = 0; lightIdx< m_Scene.GetNumLights();lightIdx++)
     {
-      Ray point2Light(pRay.GetPoint(pIntersectionTime),m_Scene.GetLight(lightIdx).position - pRay.GetPoint(pIntersectionTime)); 
+      Ray point2Light(pRay.GetPoint(pIntersectionTime)+m_Scene.GetLight(lightIdx).position*Tools::EPSILON,
+        m_Scene.GetLight(lightIdx).position - pRay.GetPoint(pIntersectionTime)); 
       bool objIntersection = false;
       for(int objIdx = 0; objIdx < m_Scene.GetNumObjects(); objIdx++)
       {

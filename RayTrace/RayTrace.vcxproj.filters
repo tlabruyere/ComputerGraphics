@@ -36,13 +36,13 @@
     <ClInclude Include="Ray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Tools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="SceneMaterial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SceneMaterialMgr.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Tools.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SceneLight.h">

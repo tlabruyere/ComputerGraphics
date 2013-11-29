@@ -181,7 +181,6 @@ public:
       lookVector.GetDirection());
 
   }
-
 };
 
 /*
@@ -204,12 +203,14 @@ public:
   {
 //    std::cout<< "Triangle has not implemented this method" <<std::endl;
     float t = -1.0;
-    float epslion = 0.0000001;
+    float epslion = 0.00001;
     // Get normal for plane
-    Vector planeNormal = (vertex[1]-vertex[0]).Cross(vertex[2] - vertex[0]);
+    Vector planeNormal = (vertex[2]-vertex[0]).Cross(vertex[1] - vertex[0]).Normalize();
+    Vector lineFrmPtOnPlane2rayOrg = (vertex[0] - pRay.GetOrigin());
 
-    float t_potential = (planeNormal.Dot(vertex[0] - pRay.GetOrigin())) / (planeNormal.Dot( pRay.GetDirection()));
-    if(t_potential > epslion)
+
+    float t_potential = (planeNormal.Dot(lineFrmPtOnPlane2rayOrg)) / (planeNormal.Dot( pRay.GetDirection()));
+    if(t_potential > Tools::EPSILON)
     {
       //Compute whether point is within the bounds of the triangle
       Vector pointOfIntersection = pRay.GetPoint(t_potential);
@@ -222,19 +223,43 @@ public:
 
       float pointArea = ptTriangle0 + ptTriangle1 + ptTriangle2;
 
-      if(abs( totalAreaOfTriangle - pointArea) < epslion && abs( totalAreaOfTriangle - pointArea) > -epslion)
-	t = t_potential;
+      if(abs( totalAreaOfTriangle - pointArea) < Tools::EPSILON&& abs( totalAreaOfTriangle - pointArea) > -Tools::EPSILON)
+        t = t_potential;
     }
-
-
     return t;
   }
 
   Vector GetColor(SceneLight pLight, Vector pSurfPt, Ray lookVector)
   {
-    return Vector(0.0,0.0,0.0);
-  }
+    Vector outColor;
+    Vector lightVector = (pLight.position-pSurfPt).Normalize();
 
+    float totalAreaOfTriangle = Tools::AreaOfTriangle( vertex[0],vertex[1],vertex[2]);
+    
+    const int numVertex = 3;
+    float* ptTriangle = new float[numVertex];
+    ptTriangle[0] = Tools::AreaOfTriangle( pSurfPt, vertex[1], vertex[2])/ totalAreaOfTriangle;
+    ptTriangle[1] = Tools::AreaOfTriangle( vertex[0], pSurfPt, vertex[2])/ totalAreaOfTriangle;
+    ptTriangle[2] = Tools::AreaOfTriangle( vertex[0], vertex[1], pSurfPt)/ totalAreaOfTriangle;
+
+    // compute phong shading per vertex
+    SceneMaterialMgr &mat = SceneMaterialMgr::GetInstance();
+    Vector vertColor[numVertex];
+    for(int i=0; i<numVertex; i++)
+    {
+      vertColor[i] = Tools::GetPhongColor(
+        mat.GetMaterial(material[i]),
+        pLight,
+        normal[i],
+        Tools::Reflection(lookVector.GetDirection(),normal[i]),
+        lightVector,
+        lookVector.GetDirection());
+      outColor = outColor + vertColor[i]*ptTriangle[i];
+    }
+    delete ptTriangle;
+
+    return outColor;
+  }
 };
 
 /*

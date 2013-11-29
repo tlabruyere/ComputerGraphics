@@ -1,5 +1,6 @@
 #ifndef TOOLS_H
 #define TOOLS_H
+
 #include <algorithm>
 #include <cmath>
 
@@ -10,6 +11,8 @@
 class Tools
 {
 public:
+  const static float EPSILON;
+
   static Vector ParseColor (XMLNode node)
   {
     if (node.isEmpty ())
@@ -52,8 +55,7 @@ public:
     float theta = acos( ((p1p0).Dot(p2p0)) / (p1p0.Magnitude() * p2p0.Magnitude()) );
     float area = 0.5 * (p1p0.Magnitude() * p2p0.Magnitude()) * sin(theta);
     return area;
-
   }
 };
-
+const float Tools::EPSILON = 0.01;
 #endif //TOOLS_H
