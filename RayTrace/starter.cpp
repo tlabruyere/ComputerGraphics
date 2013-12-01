@@ -14,6 +14,12 @@
 
 #define WINDOW_WIDTH 320
 #define WINDOW_HEIGHT 240
+//#define WINDOW_WIDTH 1
+//#define WINDOW_HEIGHT 2
+//#define WINDOW_WIDTH 800
+//#define WINDOW_HEIGHT 600
+//#define WINDOW_WIDTH 100
+//#define WINDOW_HEIGHT 600
 
 #include "Scene.h"
 #include "RayTrace.h"
@@ -178,7 +184,8 @@ int main (int argc, char ** argv)
 
   //You will be creating a menu to load in scenes
   //The test.xml is the default scene and you will modify this code
-  if (!g_RayTrace.m_Scene.Load ("test.xml"))
+  //if (!g_RayTrace.m_Scene.Load ("test.xml"))
+  if (!g_RayTrace.m_Scene.Load ("snowman.xml"))
   {
     printf ("failed to load scene\n");
     exit(1);

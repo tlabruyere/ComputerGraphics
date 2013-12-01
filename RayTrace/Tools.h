@@ -32,10 +32,9 @@ public:
 
   static Vector Reflection(Vector pLookDir, Vector pNormal)
   {
-    return (pNormal 
+    return (pLookDir - pNormal 
       * 2.0 
-      * (max(pLookDir.Dot(pNormal),0.0)) 
-      - pLookDir).Normalize();
+      * (max(pLookDir.Dot(pNormal),0.0)) ).Normalize();
   }
 
   static Vector Diffuse(Vector pMatDiffuse, Vector pLightColor, Vector pLightDir, Vector pNormal)
@@ -52,8 +51,9 @@ public:
   {
     Vector p1p0 = p1 - p0;
     Vector p2p0 = p2 - p0;
-    float theta = acos( ((p1p0).Dot(p2p0)) / (p1p0.Magnitude() * p2p0.Magnitude()) );
-    float area = 0.5 * (p1p0.Magnitude() * p2p0.Magnitude()) * sin(theta);
+//    float theta = acos( ((p1p0).Dot(p2p0)) / (p1p0.Magnitude() * p2p0.Magnitude()) );
+//    float area = 0.5 * (p1p0.Magnitude() * p2p0.Magnitude()) * sin(theta);
+    float area = p1p0.Cross(p2p0).Magnitude() * 0.5;
     return area;
   }
 };

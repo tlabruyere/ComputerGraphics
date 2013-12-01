@@ -105,11 +105,19 @@ public:
     return Vector (x * scaleVector.x, y * scaleVector.y, z * scaleVector.z, w * scaleVector.w);
   }
   
-/*  Vector operator * (float scalar)
+  friend bool operator == (const Vector& lhs, const Vector& rhs)
   {
-    return Vector (x * scalar, y * scalar, z * scalar, w * scalar);
+    bool isEqual = false;
+    if(lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z && lhs.w == rhs.w)
+      isEqual = true;
+    return isEqual;
   }
-  */
+ 
+  friend bool operator != (const Vector& lhs, const Vector& rhs)
+  {
+    return !(lhs == rhs);
+  }
+  
 };
 
 /*

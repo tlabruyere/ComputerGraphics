@@ -127,6 +127,11 @@ public:
   {
     return Vector(0.0,0.0,0.0);
   }
+
+  virtual Vector GetNormal(Vector* pSurfPt)
+  {
+    return Vector(0.0,0.0,0.0);
+  }
 };
 
 /*
@@ -167,7 +172,7 @@ public:
 
   Vector GetColor(SceneLight pLight, Vector pSurfPt, Ray lookVector)
   {
-    Vector ptNormal = (pSurfPt - center).Normalize();
+    Vector ptNormal = GetNormal(&pSurfPt);
     Vector ReflectionVec = (ptNormal * 2.0 * (max(lookVector.GetDirection().Dot(ptNormal),0.0)) - lookVector.GetDirection()).Normalize();
     Vector lightVector = (pLight.position-pSurfPt).Normalize();
     SceneMaterialMgr& materialMgr = SceneMaterialMgr::GetInstance();
@@ -180,6 +185,11 @@ public:
       lightVector,
       lookVector.GetDirection());
 
+  }
+ 
+  Vector GetNormal(Vector* pSurfPt)
+  {
+    return (*pSurfPt - center).Normalize();
   }
 };
 
@@ -201,11 +211,10 @@ public:
   SceneTriangle (std::string nm) : SceneObject (nm, SceneObjectType::Triangle) {}
   float IntersectionTest(Ray pRay)
   {
-//    std::cout<< "Triangle has not implemented this method" <<std::endl;
     float t = -1.0;
     float epslion = 0.00001;
     // Get normal for plane
-    Vector planeNormal = (vertex[2]-vertex[0]).Cross(vertex[1] - vertex[0]).Normalize();
+    Vector planeNormal = GetNormal();
     Vector lineFrmPtOnPlane2rayOrg = (vertex[0] - pRay.GetOrigin());
 
 
@@ -231,7 +240,7 @@ public:
 
   Vector GetColor(SceneLight pLight, Vector pSurfPt, Ray lookVector)
   {
-    Vector outColor;
+    Vector outColor(0.0,0.0,0.0);
     Vector lightVector = (pLight.position-pSurfPt).Normalize();
 
     float totalAreaOfTriangle = Tools::AreaOfTriangle( vertex[0],vertex[1],vertex[2]);
@@ -242,6 +251,7 @@ public:
     ptTriangle[1] = Tools::AreaOfTriangle( vertex[0], pSurfPt, vertex[2])/ totalAreaOfTriangle;
     ptTriangle[2] = Tools::AreaOfTriangle( vertex[0], vertex[1], pSurfPt)/ totalAreaOfTriangle;
 
+//    float test = ptTriangle[0] + ptTriangle[1] + ptTriangle[2];
     // compute phong shading per vertex
     SceneMaterialMgr &mat = SceneMaterialMgr::GetInstance();
     Vector vertColor[numVertex];
@@ -259,6 +269,11 @@ public:
     delete ptTriangle;
 
     return outColor;
+  }
+  
+  Vector GetNormal(Vector* pSurfPt = NULL)
+  {
+    return (vertex[2]-vertex[0]).Cross(vertex[1] - vertex[0]).Normalize();
   }
 };
 
@@ -287,11 +302,29 @@ public:
  
   float IntersectionTest(Ray pRay)
   {
-    std::cout<< "SceneModel has not implemented this method" <<std::endl;
-    return 0.0;
+    float t = -1.0;
+    float goodT = FLT_MAX;
+    for(int i = 0;i<triangleList.size();i++)
+    {
+      float potential_t = triangleList[i].IntersectionTest(pRay);
+      if(potential_t > 0 && potential_t<goodT)
+      {
+	goodT = potential_t;
+      }
+    }
+    if(goodT >0.0)
+    {
+      t = goodT;
+    }
+    return t;
   }
 
   Vector GetColor(SceneLight pLight, Vector pSurfPt, Ray lookVector)
+  {
+
+  }
+  
+  Vector GetNormal(Vector* pSurfPt)
   {
     return Vector(0.0,0.0,0.0);
   }

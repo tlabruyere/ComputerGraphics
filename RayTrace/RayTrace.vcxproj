@@ -80,6 +80,7 @@
     <ClCompile Include="xmlParser.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Xml Include="snowman.xml" />
     <Xml Include="test.xml">
       <SubType>Designer</SubType>
     </Xml>

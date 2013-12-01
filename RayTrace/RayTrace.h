@@ -64,10 +64,9 @@ private:
 
   Vector Trace(Ray pRay, int pDepth )
   {
-    Vector color = m_Scene.GetBackground().color;
     if(pDepth > TRACE_DEPTH)
     {
-      return color;
+      return m_Scene.GetBackground().color;
     }
     int closestObj = -1;
     float closestDist = FLT_MAX;
@@ -80,11 +79,25 @@ private:
         closestObj = i;
       }
     }
-    if(closestObj >= 0)
+    if(closestObj >= 0) //intersection
     {
-      color = AccLightSource(pRay, closestObj, closestDist);
+      Vector color = AccLightSource(pRay, closestObj, closestDist);
+      Vector surfPt = pRay.GetPoint(closestDist);
+      Vector surfPtNormal = m_Scene.getObject(closestObj)->GetNormal(&surfPt);
+      Vector reflectionDir = Tools::Reflection( pRay.GetDirection(), surfPtNormal);
+
+      Ray Reflection(surfPt + reflectionDir*Tools::EPSILON, reflectionDir);
+      Vector reflectionColor = Trace(Reflection, pDepth + 1);
+      if(reflectionColor!= m_Scene.GetBackground().color)
+      {
+	color = color + reflectionColor;
+      }
+      return  color;
     }
-    return  color;
+    else // no intersection
+    {
+      return m_Scene.GetBackground().color;
+    }
   
   }
 
@@ -113,6 +126,7 @@ private:
     return color;
   }
    
+
 
 
 public:
