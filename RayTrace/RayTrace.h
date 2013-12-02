@@ -62,7 +62,7 @@ private:
     return Ray(m_Scene.GetCamera().position, ray_direction, image_point);
   }
 
-  Vector Trace(Ray pRay, int pDepth )
+  Vector Trace(Ray pRay, int pDepth, float pDist )
   {
     if(pDepth > TRACE_DEPTH)
     {
@@ -81,36 +81,48 @@ private:
     }
     if(closestObj >= 0) //intersection
     {
-      Vector color = AccLightSource(pRay, closestObj, closestDist);
+      Vector color = AccLightSource(pRay, closestObj, closestDist );
       Vector surfPt = pRay.GetPoint(closestDist);
-      Vector surfPtNormal = m_Scene.getObject(closestObj)->GetNormal(&surfPt);
+      Vector surfPtNormal = m_Scene.getObject(closestObj)->GetNormal(surfPt);
       Vector reflectionDir = Tools::Reflection( pRay.GetDirection(), surfPtNormal);
 
-      Ray Reflection(surfPt + reflectionDir*Tools::EPSILON, reflectionDir);
-      Vector reflectionColor = Trace(Reflection, pDepth + 1);
-      if(reflectionColor!= m_Scene.GetBackground().color)
-      {
-	color = color + reflectionColor;
-      }
+//      Ray Reflection(surfPt + reflectionDir*Tools::EPSILON, reflectionDir);
+      Ray Reflection(surfPt + surfPtNormal*Tools::EPSILON, reflectionDir);
+//      Ray Reflection(surfPt , reflectionDir);
+      Vector reflectionColor = Trace(Reflection, pDepth + 1, pDist + closestDist);
+//      if(reflectionColor!= m_Scene.GetBackground().color)
+//      {
+	color = color + reflectionColor*m_Scene.getObject(closestObj)->GetReflectivity(surfPt);
+//      }
+
       return  color;
     }
-    else // no intersection
+    else // no intersection off to infinity
     {
-      return m_Scene.GetBackground().color;
+      Vector color = m_Scene.GetBackground().color;
+/*      if(pDepth > 0) // hit object do not add color contibution for background
+      {
+        color = Vector(0.0, 0.0, 0.0);
+      }
+*/
+      return color;
     }
   
   }
 
-  Vector AccLightSource(Ray pRay, int pObjIdx, float pIntersectionTime )
+  Vector AccLightSource(Ray pRay, int pObjIdx, float pIntersectionTime)
   {
     Vector color;//= m_Scene.GetBackground().ambientLight;
     for(int lightIdx = 0; lightIdx< m_Scene.GetNumLights();lightIdx++)
     {
-      Ray point2Light(pRay.GetPoint(pIntersectionTime)+m_Scene.GetLight(lightIdx).position*Tools::EPSILON,
-        m_Scene.GetLight(lightIdx).position - pRay.GetPoint(pIntersectionTime)); 
+//      Ray point2Light(pRay.GetPoint(pIntersectionTime)+m_Scene.GetLight(lightIdx).position*Tools::EPSILON,
+//        m_Scene.GetLight(lightIdx).position - pRay.GetPoint(pIntersectionTime)); 
+      Vector surfPt =  pRay.GetPoint(pIntersectionTime);
       bool objIntersection = false;
       for(int objIdx = 0; objIdx < m_Scene.GetNumObjects(); objIdx++)
       {
+        Ray point2Light(pRay.GetPoint(pIntersectionTime)+m_Scene.getObject(objIdx)->GetNormal(surfPt)*Tools::EPSILON,
+          m_Scene.GetLight(lightIdx).position - pRay.GetPoint(pIntersectionTime)); 
         float t = m_Scene.getObject(objIdx)->IntersectionTest( point2Light);
         if(t>0) // if t is found, then there is an object blocking the light
         {
@@ -120,7 +132,7 @@ private:
       }
       if(!objIntersection)
       {
-        color = color + m_Scene.getObject(pObjIdx)->GetColor(m_Scene.GetLight(lightIdx), pRay.GetPoint(pIntersectionTime), pRay);
+        color = color + m_Scene.getObject(pObjIdx)->GetColor(m_Scene.GetLight(lightIdx), surfPt, pRay, pIntersectionTime) /m_Scene.GetNumLights();
       }
     }
     return color;
@@ -182,7 +194,20 @@ public:
 
     // Until this function is implemented, return white
 //    return Vector (1.0f, 1.0f, 1.0f);
-    Vector retVec =  Trace(ComputeStartRay(screenX, screenY),1);
+    Vector retVec =  Trace(ComputeStartRay(screenX, screenY), 0, 0.0);
+    // clamp if necessary ( may not be needed)
+    if(retVec.x >1.0)
+    {
+      retVec.x = 1.0;
+    }
+    if(retVec.y >1.0)
+    {
+      retVec.y = 1.0;
+    }
+    if(retVec.z >1.0)
+    {
+      retVec.z = 1.0;
+    }
     return retVec;
   }
 };

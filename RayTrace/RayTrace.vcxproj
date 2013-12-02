@@ -70,6 +70,7 @@
     <ClInclude Include="SceneLight.h" />
     <ClInclude Include="SceneMaterial.h" />
     <ClInclude Include="SceneMaterialMgr.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Tools.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="xmlParser.h" />

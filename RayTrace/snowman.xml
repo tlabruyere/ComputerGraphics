@@ -1,11 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
 <!-- Scene Description in XML -->
-<scene desc="Simple Test Scene - Triangle + Sphere."
-	   author="Dr. Ross">
+<scene desc="Snowman"
+	   author="Tom LaBruyere">
   <!-- Background Color and Ambient Light Property -->
   <background>
-    <color red="0.0" green="0.0" blue="1.0"/>
+    <!-- light blue 173,216,230-->
+    <color red="0.6784" green="0.8470" blue="0.9019"/>
     <ambientLight red="0.0" green="0.0" blue="0.4"/>
   </background>
 
@@ -16,7 +17,7 @@
     <up x="0.0" y="1.0" z="0.0"/>
   </camera-->
   <camera fieldOfView="45.0" nearClip="0.1" farClip="100.0">
-    <position x="0.0" y="5.0" z="15.0"/>
+    <position x="0.0" y="5.0" z="10.0"/>
     <target x="0.0" y="0.0" z="0.0"/>
     <up x="0.0" y="1.0" z="0.0"/>
   </camera>
@@ -26,10 +27,15 @@
   <light_list>
     <!-- Light Description, Color & Position -->
     <light>
-      <color red="0.5" green="0.5" blue="0.5"/>
-      <position x="10.0" y="10.0" z="10.0"/>
+      <color red="1.0" green="1.0" blue="1.0"/>
+      <position x="5.0" y="10.0" z="5.0"/>
       <attenuation constant="0.10" linear="0.03" quadratic="0.00"/>
     </light>
+    <!--light>
+      <color red="1.0" green="1.0" blue="1.0"/>
+      <position x="-5.0" y="10.0" z="5.0"/>
+      <attenuation constant="0.10" linear="0.03" quadratic="0.00"/>
+    </light-->
   </light_list>
 
   <!-- Material Type Collection -->
@@ -45,6 +51,7 @@
       <texture filename=""/>
       <diffuse red="0.0" green="1.0" blue="0.0"/>
       <specular red="0.0" green="0.50" blue="0.0" shininess="2.0"/>
+      <reflective red="1." green="1." blue="1."/>
     </material>
 
     <material name="Red">
@@ -69,132 +76,201 @@
       <texture filename=""/>
       <diffuse red="0.780392" green="0.568627" blue="0.113725"/>
       <specular red="0.992157" green="0.941176" blue="0.807843" shininess="27.89740"/>
+      <!--specular red="0.992157" green="0.941176" blue="0.807843" shininess="200.0"/-->
+      <transparent red="0.0" green="0.0" blue="0.0"/>
+      <reflective red="0.3" green="0.3" blue="0.3"/>
+      <refraction_index red="0.0" green="0.0" blue="0.0"/>
+    </material>
+    
+    <material name="CHECKERBOARD">
+      <texture filename="CHECKERBOARD"/>
+      <diffuse red="0.0" green="0.0" blue="0.0"/>
+      <specular red="0.0" green="0.0" blue="0.0" shininess="0.0"/>
       <transparent red="0.0" green="0.0" blue="0.0"/>
       <reflective red="0.0" green="0.0" blue="0.0"/>
       <refraction_index red="0.0" green="0.0" blue="0.0"/>
+    </material>
+
+    <material name="Mirror">
+      <texture filename=""/>
+      <diffuse red="0.0" green="0.0" blue="0.0"/>
+      <specular red="0.0" green="0.00" blue="0.0" shininess="100.0"/>
+      <reflective red="1.0" green="1.0" blue="1.0"/>
     </material>
   </material_list>
 
   <!-- List of Scene Objects -->
   <object_list>
     <!-- Sphere Object -->
-    <sphere name="SphereBase" material="Brass" radius="1.5">
+    <sphere name="SphereBase" material="Green" radius="1.5">
       <scale x="1.0" y="1.0" z="1.0"/>
       <rotation x="0.0" y="0.0" z="0.0"/>
       <position x="0.0" y="0.0" z="0.0"/>
-      <center x="0.0" y=".750" z="0.0"/>
+      <center x="-0.0" y=".750" z="0.0"/>
     </sphere>
     <sphere name="SphereMiddle" material="Red" radius="1.0">
       <scale x="1.0" y="1.0" z="1.0"/>
       <rotation x="0.0" y="0.0" z="0.0"/>
       <position x="0.0" y="0.0" z="0.0"/>
-      <center x="0.0" y="2.5" z="0.0"/>
+      <center x="-0.0" y="2.5" z="0.0"/>
     </sphere>
     <sphere name="SphereTop" material="Purple" radius="0.5">
       <scale x="1.0" y="1.0" z="1.0"/>
       <rotation x="0.0" y="0.0" z="0.0"/>
       <position x="0.0" y="0.0" z="0.0"/>
-      <center x="0.0" y="3.75" z="0.0"/>
+      <center x="-0.0" y="3.75" z="0.0"/>
     </sphere>
 
+    <sphere name="SphereMirror" material="Mirror" radius="1.5">
+      <scale x="1.0" y="1.0" z="1.0"/>
+      <rotation x="0.0" y="0.0" z="0.0"/>
+      <position x="0.0" y="0.0" z="0.0"/>
+      <center x="-3.0" y=".750" z="0.0"/>
+    </sphere>
+ 
+    
     <!-- GroundPlane Object -->
     <triangle name="GroundPlaneTri1">
       <scale x="1.0" y="1.0" z="1.0"/>
       <rotation x="0.0" y="0.0" z="0.0"/>
       <position x="0.0" y="0.0" z="0.0"/>
 
-      <vertex index="0" material="Green">
+      <vertex index="0" material="CHECKERBOARD">
         <position x="-10.0" y="0.0" z="10.0"/>
         <normal x="0.0" y="1.0" z="0.0"/>
         <texture u="0.0" v="0.0"/>
       </vertex>
-      <vertex index="1" material="Green">
+      <vertex index="1" material="CHECKERBOARD">
         <position x="10.0" y="0.0" z="10.0"/>
         <normal x="0.0" y="1.0" z="0.0"/>
-        <texture u="0.0" v="0.0"/>
+        <texture u="1.0" v="0.0"/>
       </vertex>
-      <vertex index="2" material="Green">
+      <vertex index="2" material="CHECKERBOARD">
         <position x="-10.0" y="0.0" z="-10.0"/>
         <normal x="0.0" y="1.0" z="0.0"/>
-        <texture u="0.0" v="0.0"/>
+        <texture u="0.0" v="1.0"/>
       </vertex>
     </triangle>
     <triangle name="GroundPlaneTri2">
       <scale x="1.0" y="1.0" z="1.0"/>
       <rotation x="0.0" y="0.0" z="0.0"/>
       <position x="0.0" y="0.0" z="0.0"/>
-      <vertex index="0" material="Green">
+      <vertex index="0" material="CHECKERBOARD">
         <position x="-10.0" y="0.0" z="-10.0"/>
         <normal x="0.0" y="1.0" z="0.0"/>
-        <texture u="0.0" v="0.0"/>
+        <texture u="0.0" v="1.0"/>
       </vertex>
-      <vertex index="1" material="Green">
+      <vertex index="1" material="CHECKERBOARD">
         <position x="10.0" y="0.0" z="10.0"/>
         <normal x="0.0" y="1.0" z="0.0"/>
-        <texture u="0.0" v="0.0"/>
+        <texture u="1.0" v="0.0"/>
       </vertex>
-      <vertex index="2" material="Green">
+      <vertex index="2" material="CHECKERBOARD">
         <position x="10.0" y="0.0" z="-10.0"/>
         <normal x="0.0" y="1.0" z="0.0"/>
-        <texture u="0.0" v="0.0"/>
+        <texture u="1.0" v="1.0"/>
       </vertex>
     </triangle>
 
-    <!--triangle name="GroundPlaneTri1">
+    <!-- Mirror Object -->
+    <!--triangle name="Mirror1">
       <scale x="1.0" y="1.0" z="1.0"/>
       <rotation x="0.0" y="0.0" z="0.0"/>
       <position x="0.0" y="0.0" z="0.0"/>
 
-      <vertex index="0" material="Green">
-        <position x="-3.0" y="0.0" z="0.0"/>
-        <normal x="0.0" y="1.0" z="0.0"/>
+      <vertex index="0" material="Mirror">
+        <position x="-5.0" y="0.0" z="-5.0"/>
+        <normal x="0.0" y="0.0" z="1.0"/>
         <texture u="0.0" v="0.0"/>
       </vertex>
-      <vertex index="1" material="Green">
-        <position x="3.0" y="0.0" z="0.0"/>
-        <normal x="0.0" y="1.0" z="0.0"/>
-        <texture u="0.0" v="0.0"/>
+      <vertex index="1" material="Mirror">
+        <position x="5.0" y="0.0" z="-5.0"/>
+        <normal x="0.0" y="0.0" z="1.0"/>
+        <texture u="1.0" v="0.0"/>
       </vertex>
-      <vertex index="2" material="Green">
-        <position x="-3.0" y="0.0" z="5.0"/>
-        <normal x="0.0" y="1.0" z="0.0"/>
-        <texture u="0.0" v="0.0"/>
+      <vertex index="2" material="Mirror">
+        <position x="-5.0" y="5.0" z="-5.0"/>
+        <normal x="0.0" y="0.0" z="1.0"/>
+        <texture u="0.0" v="1.0"/>
       </vertex>
     </triangle>
-    <triangle name="GroundPlaneTri2">
+    <triangle name="Mirror2">
       <scale x="1.0" y="1.0" z="1.0"/>
       <rotation x="0.0" y="0.0" z="0.0"/>
       <position x="0.0" y="0.0" z="0.0"/>
-      <vertex index="0" material="Green">
-        <position x="-3.0" y="0.0" z="5.0"/>
-        <normal x="0.0" y="1.0" z="0.0"/>
+      <vertex index="0" material="Mirror">
+        <position x="-5.0" y="5.0" z="-5.0"/>
+        <normal x="0.0" y="0.0" z="1.0"/>
+        <texture u="0.0" v="1.0"/>
+      </vertex>
+      <vertex index="1" material="Mirror">
+        <position x="5.0" y="0.0" z="-5.0"/>
+        <normal x="0.0" y="0.0" z="1.0"/>
+        <texture u="1.0" v="0.0"/>
+      </vertex>
+      <vertex index="2" material="Mirror">
+        <position x="5.0" y="5.0" z="-5.0"/>
+        <normal x="0.0" y="0.0" z="1.0"/>
+        <texture u="1.0" v="1.0"/>
+      </vertex>
+    </triangle!-->
+    <!--triangle name="Mirror1">
+      <scale x="1.0" y="1.0" z="1.0"/>
+      <rotation x="0.0" y="0.0" z="0.0"/>
+      <position x="0.0" y="0.0" z="0.0"/>
+
+      <vertex index="0" material="Mirror">
+        <position x="-10.0" y="-10.0" z="0.0"/>
+        <normal x="0.0" y="0.0" z="1.0"/>
         <texture u="0.0" v="0.0"/>
       </vertex>
-      <vertex index="1" material="Green">
-        <position x="3.0" y="0.0" z="0.0"/>
-        <normal x="0.0" y="1.0" z="0.0"/>
-        <texture u="0.0" v="0.0"/>
+      <vertex index="1" material="Mirror">
+        <position x="10.0" y="-10.0" z="0.0"/>
+        <normal x="0.0" y="0.0" z="1.0"/>
+        <texture u="1.0" v="0.0"/>
       </vertex>
-      <vertex index="2" material="Green">
-        <position x="3.0" y="0.0" z="5.0"/>
-        <normal x="0.0" y="1.0" z="0.0"/>
-        <texture u="0.0" v="0.0"/>
+      <vertex index="2" material="Mirror">
+        <position x="-10.0" y="10.0" z="0.0"/>
+        <normal x="0.0" y="0.0" z="1.0"/>
+        <texture u="0.0" v="1.0"/>
+      </vertex>
+    </triangle>
+    <triangle name="Mirror2">
+      <scale x="1.0" y="1.0" z="1.0"/>
+      <rotation x="0.0" y="0.0" z="0.0"/>
+      <position x="0.0" y="0.0" z="0.0"/>
+      <vertex index="0" material="Mirror">
+        <position x="-10.0" y="10.0" z="0.0"/>
+        <normal x="0.0" y="0.0" z="1.0"/>
+        <texture u="0.0" v="1.0"/>
+      </vertex>
+      <vertex index="1" material="Mirror">
+        <position x="10.0" y="-10.0" z="0.0"/>
+        <normal x="0.0" y="0.0" z="1.0"/>
+        <texture u="1.0" v="0.0"/>
+      </vertex>
+      <vertex index="2" material="Mirror">
+        <position x="10.0" y="10.0" z="0.0"/>
+        <normal x="0.0" y="0.0" z="1.0"/>
+        <texture u="1.0" v="1.0"/>
       </vertex>
     </triangle-->
 
+
     <!-- External Model Object [Collection of Triangles] -->
     <!-- Model in 3DS File Format -->
-    <model filename="objects/cube.3ds" name="cube"  material="Purple">
+    <!--model filename="objects/cube.3ds" name="cube"  material="Mirror">
       <scale x="1.0" y="1.0" z="1.0"/>
       <rotation x="0.0" y="0.0" z="0.0"/>
-      <position x="3.0" y="1.0" z="0.0"/>
-    </model>
-    <!-- Model in OBJ File Format -->
-    <!--model filename="objects/cube.obj" name="cube"  material="White">
-      <scale x="1.0" y="1.0" z="1.0"/>
-      <rotation x="0.0" y="0.0" z="0.0"/>
-      <position x="0.0" y="0.0" z="0.0"/>
+      <position x="3.0" y="1.0" z="1.0"/>
     </model-->
+    <!-- Model in OBJ File Format -->
+    <model filename="objects/cube.obj" name="cube"  material="Brass">
+      <scale x="1.0" y="1.0" z="1.0"/>
+      <rotation x="0.0" y="0.0" z="0.0"/>
+      <position x="3.0" y="1" z="0.0"/>
+    </model>
+
   </object_list>
 
   <!-- End of Scene -->

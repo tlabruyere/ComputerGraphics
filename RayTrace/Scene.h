@@ -53,6 +53,7 @@ vertices[n] = ((SceneTriangle)tempObject).vertex[n];
 #include "Ray.h"
 #include "SceneMaterial.h"
 #include "SceneMaterialMgr.h"
+#include "Texture.h"
 
 // XML Parser by Frank Vanden Berghen
 // Available: http://iridia.ulb.ac.be/~fvandenb/tools/xmlParser.html
@@ -123,12 +124,17 @@ public:
    * else return a negitive number classifying there is no intersection in the direction of the ray
    */
   virtual float IntersectionTest(Ray pRay) = 0;
-  virtual Vector GetColor(SceneLight pLight, Vector pSurfPt, Ray lookVector)
+  virtual Vector GetColor(SceneLight pLight, Vector pSurfPt, Ray lookVector, float pDist)
   {
     return Vector(0.0,0.0,0.0);
   }
 
-  virtual Vector GetNormal(Vector* pSurfPt)
+  virtual Vector GetNormal(Vector pSurfPt)
+  {
+    return Vector(0.0,0.0,0.0);
+  }
+  
+  virtual Vector GetReflectivity(Vector pSurfPt)
   {
     return Vector(0.0,0.0,0.0);
   }
@@ -170,9 +176,9 @@ public:
     return t_return;
   }
 
-  Vector GetColor(SceneLight pLight, Vector pSurfPt, Ray lookVector)
+  Vector GetColor(SceneLight pLight, Vector pSurfPt, Ray lookVector, float pDist)
   {
-    Vector ptNormal = GetNormal(&pSurfPt);
+    Vector ptNormal = GetNormal(pSurfPt);
     Vector ReflectionVec = (ptNormal * 2.0 * (max(lookVector.GetDirection().Dot(ptNormal),0.0)) - lookVector.GetDirection()).Normalize();
     Vector lightVector = (pLight.position-pSurfPt).Normalize();
     SceneMaterialMgr& materialMgr = SceneMaterialMgr::GetInstance();
@@ -183,13 +189,20 @@ public:
       ptNormal, 
       Tools::Reflection(lookVector.GetDirection(),ptNormal),
       lightVector,
-      lookVector.GetDirection());
+      lookVector.GetDirection(),
+      pDist);
 
   }
  
-  Vector GetNormal(Vector* pSurfPt)
+  Vector GetNormal(Vector pSurfPt)
   {
-    return (*pSurfPt - center).Normalize();
+    return (pSurfPt - center).Normalize();
+  }
+
+  Vector GetReflectivity(Vector pSurfPt)
+  {
+    SceneMaterialMgr &matMgr = SceneMaterialMgr::GetInstance();
+    return matMgr.GetMaterial(material).reflective;
   }
 };
 
@@ -200,6 +213,20 @@ Single triangle object derived from the SceneObject
 */
 class SceneTriangle : public SceneObject
 {
+private:
+  Vector BarycentricCooef(Vector point)
+  {
+    Vector coord(0.0,0.0,0.0); // alpha =x, beta = y, gamma = z
+      float totalAreaOfTriangle = Tools::AreaOfTriangle( vertex[0],vertex[1],vertex[2]);
+
+      coord.x = Tools::AreaOfTriangle( point,vertex[1],vertex[2])/totalAreaOfTriangle;
+      coord.y = Tools::AreaOfTriangle( vertex[0], point,vertex[2])/totalAreaOfTriangle;
+      coord.z = Tools::AreaOfTriangle( vertex[0],vertex[1], point)/totalAreaOfTriangle;
+
+//      float pointArea = coord.x + coord.y + coord.z;
+      return coord;
+  }
+
 public:
   std::string material[3];
   Vector vertex[3];
@@ -212,9 +239,8 @@ public:
   float IntersectionTest(Ray pRay)
   {
     float t = -1.0;
-    float epslion = 0.00001;
     // Get normal for plane
-    Vector planeNormal = GetNormal();
+    Vector planeNormal = GetNormal( vertex[0]);
     Vector lineFrmPtOnPlane2rayOrg = (vertex[0] - pRay.GetOrigin());
 
 
@@ -230,6 +256,9 @@ public:
       float ptTriangle1 = Tools::AreaOfTriangle( vertex[0], pointOfIntersection,vertex[2]);
       float ptTriangle2 = Tools::AreaOfTriangle( vertex[0],vertex[1], pointOfIntersection);
 
+//      Vector coord = BarycentricCooef(pointOfIntersection);
+
+      //float pointArea = coord.x + coord.y + coord.z;
       float pointArea = ptTriangle0 + ptTriangle1 + ptTriangle2;
 
       if(abs( totalAreaOfTriangle - pointArea) < Tools::EPSILON&& abs( totalAreaOfTriangle - pointArea) > -Tools::EPSILON)
@@ -238,42 +267,88 @@ public:
     return t;
   }
 
-  Vector GetColor(SceneLight pLight, Vector pSurfPt, Ray lookVector)
+  Vector GetColor(SceneLight pLight, Vector pSurfPt, Ray lookVector, float pDist)
   {
     Vector outColor(0.0,0.0,0.0);
-    Vector lightVector = (pLight.position-pSurfPt).Normalize();
-
-    float totalAreaOfTriangle = Tools::AreaOfTriangle( vertex[0],vertex[1],vertex[2]);
-    
-    const int numVertex = 3;
-    float* ptTriangle = new float[numVertex];
-    ptTriangle[0] = Tools::AreaOfTriangle( pSurfPt, vertex[1], vertex[2])/ totalAreaOfTriangle;
-    ptTriangle[1] = Tools::AreaOfTriangle( vertex[0], pSurfPt, vertex[2])/ totalAreaOfTriangle;
-    ptTriangle[2] = Tools::AreaOfTriangle( vertex[0], vertex[1], pSurfPt)/ totalAreaOfTriangle;
-
-//    float test = ptTriangle[0] + ptTriangle[1] + ptTriangle[2];
-    // compute phong shading per vertex
-    SceneMaterialMgr &mat = SceneMaterialMgr::GetInstance();
-    Vector vertColor[numVertex];
-    for(int i=0; i<numVertex; i++)
+    SceneMaterialMgr &matMgr = SceneMaterialMgr::GetInstance();
+    SceneMaterial mat = matMgr.GetMaterial(material[0]); // Assumption: if first vertex is texture all will be textured
+    if(mat.name.compare("CHECKERBOARD")==0) // return Texture
     {
-      vertColor[i] = Tools::GetPhongColor(
-        mat.GetMaterial(material[i]),
-        pLight,
-        normal[i],
-        Tools::Reflection(lookVector.GetDirection(),normal[i]),
-        lightVector,
-        lookVector.GetDirection());
-      outColor = outColor + vertColor[i]*ptTriangle[i];
+      float totalAreaOfTriangle = Tools::AreaOfTriangle( vertex[0],vertex[1],vertex[2]);
+    
+      const int numVertex = 3;
+      float ptTriangle[numVertex];
+      ptTriangle[0] = Tools::AreaOfTriangle( pSurfPt, vertex[1], vertex[2])/ totalAreaOfTriangle;
+      ptTriangle[1] = Tools::AreaOfTriangle( vertex[0], pSurfPt, vertex[2])/ totalAreaOfTriangle;
+      ptTriangle[2] = Tools::AreaOfTriangle( vertex[0], vertex[1], pSurfPt)/ totalAreaOfTriangle;
+
+      float curU = u[0]*ptTriangle[0] + u[1]*ptTriangle[1] + u[2]*ptTriangle[2];
+      float curV = v[0]*ptTriangle[0] + v[1]*ptTriangle[1] + v[2]*ptTriangle[2];
+      outColor = Texture::CheckerBoardTexture(curU,curV);
+
     }
-    delete ptTriangle;
+    else // compute phong
+    {
+      Vector lightVector = (pLight.position-pSurfPt).Normalize();
+  
+      float totalAreaOfTriangle = Tools::AreaOfTriangle( vertex[0],vertex[1],vertex[2]);
+    
+      const int numVertex = 3;
+      float ptTriangle[numVertex];
+      ptTriangle[0] = Tools::AreaOfTriangle( pSurfPt, vertex[1], vertex[2])/ totalAreaOfTriangle;
+      ptTriangle[1] = Tools::AreaOfTriangle( vertex[0], pSurfPt, vertex[2])/ totalAreaOfTriangle;
+      ptTriangle[2] = Tools::AreaOfTriangle( vertex[0], vertex[1], pSurfPt)/ totalAreaOfTriangle;
+
+//      float test = ptTriangle[0] + ptTriangle[1] + ptTriangle[2];
+      // compute phong shading per vertex
+      Vector vertColor[numVertex];
+      for(int i=0; i<numVertex; i++)
+      {
+        vertColor[i] = Tools::GetPhongColor(
+          matMgr.GetMaterial(material[i]),
+          pLight,
+          GetNormal(pSurfPt),// normal[i],
+          Tools::Reflection(lookVector.GetDirection(),GetNormal(pSurfPt)),
+          lightVector,
+          lookVector.GetDirection(),
+          pDist);
+        outColor = outColor + vertColor[i]*ptTriangle[i];
+      }
+    }
 
     return outColor;
   }
   
-  Vector GetNormal(Vector* pSurfPt = NULL)
+  Vector GetNormal(Vector pSurfPt )
   {
-    return (vertex[2]-vertex[0]).Cross(vertex[1] - vertex[0]).Normalize();
+/*    Vector normalOut(0.0, 0.0, 0.0);
+    Vector coord = BarycentricCooef(pSurfPt);
+    Vector norm0Ref = normal[0].Normalize();
+    Vector norm1Ref = normal[1].Normalize();
+    Vector norm2Ref = normal[2].Normalize();
+
+    normalOut = (norm0Ref*coord.x + norm1Ref*coord.y + norm2Ref*coord.y).Normalize();
+    */
+//    normalOut.y = norm0Ref.y*coord.y + norm1Ref.y*coord.y + norm2Ref.y*coord.y;
+//    normalOut.z = norm0Ref.z*coord.z + norm1Ref.z*coord.z + norm2Ref.z*coord.z;
+
+    Vector normalOuta = (vertex[1]-vertex[0]).Cross(vertex[2] - vertex[0]).Normalize();
+    return normalOuta;
+  }
+
+  Vector GetReflectivity(Vector pSurfPt)
+  { // TODO: Base this off all vertcies
+    SceneMaterialMgr &matMgr = SceneMaterialMgr::GetInstance();
+    Vector out(0.0, 0.0, 0.0);
+    Vector coord = BarycentricCooef(pSurfPt);
+    Vector mat0Ref = matMgr.GetMaterial(material[0]).reflective;
+    Vector mat1Ref = matMgr.GetMaterial(material[1]).reflective;
+    Vector mat2Ref = matMgr.GetMaterial(material[2]).reflective;
+
+    out.x = mat0Ref.x*coord.x + mat1Ref.x*coord.y + mat2Ref.x*coord.y;
+    out.y = mat0Ref.y*coord.y + mat1Ref.y*coord.y + mat2Ref.y*coord.y;
+    out.z = mat0Ref.z*coord.z + mat1Ref.z*coord.z + mat2Ref.z*coord.z;
+    return mat0Ref;
   }
 };
 
@@ -288,6 +363,8 @@ public:
   std::string filename;
   std::vector<SceneTriangle> triangleList;
 
+  int triangleIntersectionIdx;
+
   // -- Constructors & Destructors --
   SceneModel (void) : SceneObject ("Model", SceneObjectType::Model) {}
   SceneModel (std::string file) : SceneObject ("Model", SceneObjectType::Model) { filename = file; }
@@ -299,36 +376,58 @@ public:
 
   // - GetTriangle - Gets the nth SceneTriangle
   SceneTriangle *GetTriangle (int triIndex) { return &triangleList[triIndex]; }
+
+  void init(){triangleIntersectionIdx = -1;}
  
   float IntersectionTest(Ray pRay)
   {
-    float t = -1.0;
-    float goodT = FLT_MAX;
+    float t = FLT_MAX;
     for(int i = 0;i<triangleList.size();i++)
     {
       float potential_t = triangleList[i].IntersectionTest(pRay);
-      if(potential_t > 0 && potential_t<goodT)
+      Vector normal = triangleList[i].GetNormal(triangleList[i].vertex[0]);
+      if(potential_t > 0 && potential_t<t)
       {
-	goodT = potential_t;
+        t = potential_t;
+        triangleIntersectionIdx = i; // found intersecton so store
       }
     }
-    if(goodT >0.0)
-    {
-      t = goodT;
-    }
+    if(t == FLT_MAX)
+      t = -1.0;
     return t;
   }
 
-  Vector GetColor(SceneLight pLight, Vector pSurfPt, Ray lookVector)
+  Vector GetColor(SceneLight pLight, Vector pSurfPt, Ray lookVector, float pDist)
   {
-
+    Vector colorOut(0.0, 0.0, 0.0);
+    if(triangleIntersectionIdx >= 0.0 && triangleIntersectionIdx < triangleList.size())
+    {
+      colorOut = triangleList[triangleIntersectionIdx].GetColor(pLight, pSurfPt, lookVector, pDist);
+  //    triangleIntersectionIdx = -1;// reset since it was used
+    }
+    return colorOut;
   }
   
-  Vector GetNormal(Vector* pSurfPt)
+  Vector GetNormal(Vector pSurfPt)
   {
-    return Vector(0.0,0.0,0.0);
+    Vector normOut(0.0, 0.0, 0.0);
+    if(triangleIntersectionIdx >= 0.0 && triangleIntersectionIdx < triangleList.size())
+    {
+      normOut = triangleList[triangleIntersectionIdx].GetNormal(pSurfPt);
+  //    triangleIntersectionIdx = -1;// reset since it was used
+    }
+    return normOut;
   }
 
+  Vector GetReflectivity(Vector pSurfPt)
+  {
+    Vector refOut(0.0, 0.0, 0.0);
+    if(triangleIntersectionIdx >= 0.0 && triangleIntersectionIdx < triangleList.size())
+    {
+      refOut = triangleList[triangleIntersectionIdx].GetReflectivity(pSurfPt);
+    }
+    return refOut;
+  }
 
 };
 
@@ -588,6 +687,10 @@ bool Scene::Load (char *filename)
               v3.y = sceneObj.m_pMeshs[obj].pVerts[sceneObj.m_pMeshs[obj].pFaces[n].corner[2]].y;
               v3.z = sceneObj.m_pMeshs[obj].pVerts[sceneObj.m_pMeshs[obj].pFaces[n].corner[2]].z;
 
+              v1 = v1 + tempModel->position;
+	      v2 = v2 + tempModel->position;
+	      v3 = v3 + tempModel->position;
+
               // Normal
               Vector normal = (v1 - v2).Cross(v3 - v2).Normalize();
 
@@ -694,6 +797,7 @@ bool Scene::Load (char *filename)
               // Load Vertex 0
               tempTriangle.material[0] = material;
               tempTriangle.vertex[0] = vertices[v_index[0]];
+	      tempTriangle.vertex[0] = tempTriangle.vertex[0] + tempModel->position;
               tempTriangle.normal[0] = normals[n_index[0]];
               // Texture Coords
               tempTriangle.u[0] = 0.0f;
@@ -702,6 +806,7 @@ bool Scene::Load (char *filename)
               // Load Vertex 1
               tempTriangle.material[1] = material;
               tempTriangle.vertex[1] = vertices[v_index[1]];
+	      tempTriangle.vertex[1] = tempTriangle.vertex[1] + tempModel->position;
               tempTriangle.normal[1] = normals[n_index[1]];
               // Texture Coords
               tempTriangle.u[1] = 0.0f;
@@ -710,6 +815,7 @@ bool Scene::Load (char *filename)
               // Load Vertex 2
               tempTriangle.material[2] = material;
               tempTriangle.vertex[2] = vertices[v_index[2]];
+	      tempTriangle.vertex[2] = tempTriangle.vertex[2] + tempModel->position;
               tempTriangle.normal[2] = normals[n_index[2]];
               // Texture Coords
               tempTriangle.u[2] = 0.0f;

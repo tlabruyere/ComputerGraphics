@@ -22,19 +22,30 @@ public:
       atof(node.getAttribute("blue")));
   }
   
-  static Vector GetPhongColor(SceneMaterial pMat, SceneLight pLight, Vector pNormal, Vector pReflection, Vector pLightVec, Vector pLookVec)
+  static float LightAttenuation(SceneLight pLight, float pDist)
+  {
+    return ( 1.0/ (pLight.attenuationConstant 
+      + pLight.attenuationLinear * pDist 
+      + (pLight.attenuationQuadratic * pDist * pDist)));
+//    return 1.0;
+  }
+
+  static Vector GetPhongColor(SceneMaterial pMat, SceneLight pLight, Vector pNormal, Vector pReflection, Vector pLightVec, Vector pLookVec, float pDist)
   {
     Vector diffuse = Diffuse(pMat.diffuse, pLight.color, pLightVec, pNormal);
     Vector specular = Specular(pMat.specular, pMat.shininess, pLight.color, pLookVec, pReflection);
-    return diffuse + specular;
+    float lightAtt = LightAttenuation(pLight, pDist);
+    return (diffuse + specular)*lightAtt;
 
   }
 
   static Vector Reflection(Vector pLookDir, Vector pNormal)
   {
-    return (pLookDir - pNormal 
+    //float dotportion = max(pLookDir.Dot(pNormal),0.0);
+    float dotportion = pLookDir.Dot(pNormal);
+    return (pLookDir.Normalize() - (pNormal.Normalize()
       * 2.0 
-      * (max(pLookDir.Dot(pNormal),0.0)) ).Normalize();
+      * dotportion) ).Normalize();
   }
 
   static Vector Diffuse(Vector pMatDiffuse, Vector pLightColor, Vector pLightDir, Vector pNormal)
