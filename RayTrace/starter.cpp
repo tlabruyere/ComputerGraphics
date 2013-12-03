@@ -11,19 +11,21 @@
 //	more quickly by reducing the resolution 
 //  Your code should work for any dimension, and should be set back
 //	to 640x480 for submission.
-
 //#define WINDOW_WIDTH 320
 //#define WINDOW_HEIGHT 240
-//#define WINDOW_WIDTH 1
+//#define WINDOW_WIDTH 2 
 //#define WINDOW_HEIGHT 2
-#define WINDOW_WIDTH 1600
-#define WINDOW_HEIGHT 900
-//#define WINDOW_WIDTH 100
-//#define WINDOW_HEIGHT 600
+//#define WINDOW_WIDTH 1600
+//#define WINDOW_HEIGHT 900
+#define WINDOW_WIDTH 640
+#define WINDOW_HEIGHT 480
 
 #include "Scene.h"
 #include "RayTrace.h"
 #include "NormalRenderer.h"
+#include <windows.h>
+#include <ppl.h>
+//#include <omp.h>
 
 // --- Global State Variables --- 
 
@@ -45,7 +47,8 @@ NormalRenderer g_NormalRenderer;
 // - RayTrace Buffer - 
 Vector g_ScreenBuffer[WINDOW_HEIGHT][WINDOW_WIDTH];
 
-unsigned int g_X = 0, g_Y = 0;
+//unsigned int g_X = 0, g_Y = 0;
+size_t g_X = 0, g_Y = 0;
 bool g_bRayTrace = false;
 bool g_bRenderNormal = true;
 
@@ -90,6 +93,8 @@ void display()
         for (int x = 0; x < WINDOW_WIDTH; x++)
         {
 	  // Write to screen
+//          g_ScreenBuffer[y][x] = g_RayTrace.CalculatePixel (x, y);
+
           glColor3f(g_ScreenBuffer[y][x].x, g_ScreenBuffer[y][x].y, g_ScreenBuffer[y][x].z);
 //          glColor3f(0.4,0.4,0.4);
           glVertex2i(x, y);
@@ -133,10 +138,19 @@ void doIdle()
 {
   if (g_bRayTrace)
   {
-    g_ScreenBuffer[g_Y][g_X] = g_RayTrace.CalculatePixel (g_X, g_Y);
-
+    concurrency::parallel_for(size_t(0), size_t(WINDOW_HEIGHT), [&](size_t g_Y)
+    {
+//  omp_set_dynamic(0);  
+//  omp_set_num_threads(4);
+//#pragma omp parallel for  num_threads(4)
+//    for(g_Y =0.0;g_Y<WINDOW_HEIGHT;g_Y++)
+//    {
+      for(size_t X=0.0;X<WINDOW_WIDTH;X++)
+      {
+        g_ScreenBuffer[g_Y][X] = g_RayTrace.CalculatePixel (X, g_Y);
+//        glutPostRedisplay ();
     // Move to the next pixel
-    g_X++;
+/*    g_X++;
     if (g_X >= WINDOW_WIDTH)
     {
       // Move to the next row
@@ -153,6 +167,13 @@ void doIdle()
       g_bRayTrace = false;
       glutPostRedisplay ();
     }
+    */
+      }
+    });
+    g_bRayTrace = false;
+    glutPostRedisplay ();
+//    g_Y = WINDOW_HEIGHT;
+//    g_X = WINDOW_WIDTH;
   }
   else
   {

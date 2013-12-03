@@ -124,17 +124,17 @@ public:
    * else return a negitive number classifying there is no intersection in the direction of the ray
    */
   virtual float IntersectionTest(Ray pRay) = 0;
-  virtual Vector GetColor(SceneLight pLight, Vector pSurfPt, Ray lookVector, float pDist)
+  virtual Vector GetColor(SceneLight pLight, Ray lookVector, float pDist)
   {
     return Vector(0.0,0.0,0.0);
   }
 
-  virtual Vector GetNormal(Vector pSurfPt)
+  virtual Vector GetNormal(Ray pRay, float intersectionTime)
   {
     return Vector(0.0,0.0,0.0);
   }
   
-  virtual Vector GetReflectivity(Vector pSurfPt)
+  virtual Vector GetReflectivity(Ray pRay, float intersectionTime)
   {
     return Vector(0.0,0.0,0.0);
   }
@@ -176,11 +176,12 @@ public:
     return t_return;
   }
 
-  Vector GetColor(SceneLight pLight, Vector pSurfPt, Ray lookVector, float pDist)
+  Vector GetColor(SceneLight pLight, Ray lookVector, float pDist)
   {
-    Vector ptNormal = GetNormal(pSurfPt);
+    Vector surfPt = lookVector.GetPoint(pDist);
+    Vector ptNormal = GetNormal(lookVector, pDist);
     Vector ReflectionVec = (ptNormal * 2.0 * (max(lookVector.GetDirection().Dot(ptNormal),0.0)) - lookVector.GetDirection()).Normalize();
-    Vector lightVector = (pLight.position-pSurfPt).Normalize();
+    Vector lightVector = (pLight.position-surfPt).Normalize();
     SceneMaterialMgr& materialMgr = SceneMaterialMgr::GetInstance();
 
     return Tools::GetPhongColor(
@@ -194,12 +195,13 @@ public:
 
   }
  
-  Vector GetNormal(Vector pSurfPt)
+  Vector GetNormal(Ray pRay, float intersectionTime)
   {
-    return (pSurfPt - center).Normalize();
+    Vector surfPt = pRay.GetPoint(intersectionTime);
+    return (surfPt - center).Normalize();
   }
 
-  Vector GetReflectivity(Vector pSurfPt)
+  Vector GetReflectivity(Ray pRay, float intersectionTime)
   {
     SceneMaterialMgr &matMgr = SceneMaterialMgr::GetInstance();
     return matMgr.GetMaterial(material).reflective;
@@ -240,10 +242,9 @@ public:
   {
     float t = -1.0;
     // Get normal for plane
-    Vector planeNormal = GetNormal( vertex[0]);
+    Vector planeNormal = GetNormal( pRay, 0.0);
     Vector lineFrmPtOnPlane2rayOrg = (vertex[0] - pRay.GetOrigin());
-
-
+    
     float t_potential = (planeNormal.Dot(lineFrmPtOnPlane2rayOrg)) / (planeNormal.Dot( pRay.GetDirection()));
     if(t_potential > Tools::EPSILON)
     {
@@ -267,9 +268,11 @@ public:
     return t;
   }
 
-  Vector GetColor(SceneLight pLight, Vector pSurfPt, Ray lookVector, float pDist)
+  Vector GetColor(SceneLight pLight, Ray lookVector, float pDist)
   {
     Vector outColor(0.0,0.0,0.0);
+    Vector planeNormal = GetNormal( lookVector, 0.0);
+    Vector surfPt = lookVector.GetPoint(pDist);
     SceneMaterialMgr &matMgr = SceneMaterialMgr::GetInstance();
     SceneMaterial mat = matMgr.GetMaterial(material[0]); // Assumption: if first vertex is texture all will be textured
     if(mat.name.compare("CHECKERBOARD")==0) // return Texture
@@ -278,9 +281,9 @@ public:
     
       const int numVertex = 3;
       float ptTriangle[numVertex];
-      ptTriangle[0] = Tools::AreaOfTriangle( pSurfPt, vertex[1], vertex[2])/ totalAreaOfTriangle;
-      ptTriangle[1] = Tools::AreaOfTriangle( vertex[0], pSurfPt, vertex[2])/ totalAreaOfTriangle;
-      ptTriangle[2] = Tools::AreaOfTriangle( vertex[0], vertex[1], pSurfPt)/ totalAreaOfTriangle;
+      ptTriangle[0] = Tools::AreaOfTriangle( surfPt, vertex[1], vertex[2])/ totalAreaOfTriangle;
+      ptTriangle[1] = Tools::AreaOfTriangle( vertex[0], surfPt, vertex[2])/ totalAreaOfTriangle;
+      ptTriangle[2] = Tools::AreaOfTriangle( vertex[0], vertex[1], surfPt)/ totalAreaOfTriangle;
 
       float curU = u[0]*ptTriangle[0] + u[1]*ptTriangle[1] + u[2]*ptTriangle[2];
       float curV = v[0]*ptTriangle[0] + v[1]*ptTriangle[1] + v[2]*ptTriangle[2];
@@ -289,15 +292,15 @@ public:
     }
     else // compute phong
     {
-      Vector lightVector = (pLight.position-pSurfPt).Normalize();
+      Vector lightVector = (pLight.position-surfPt).Normalize();
   
       float totalAreaOfTriangle = Tools::AreaOfTriangle( vertex[0],vertex[1],vertex[2]);
     
       const int numVertex = 3;
       float ptTriangle[numVertex];
-      ptTriangle[0] = Tools::AreaOfTriangle( pSurfPt, vertex[1], vertex[2])/ totalAreaOfTriangle;
-      ptTriangle[1] = Tools::AreaOfTriangle( vertex[0], pSurfPt, vertex[2])/ totalAreaOfTriangle;
-      ptTriangle[2] = Tools::AreaOfTriangle( vertex[0], vertex[1], pSurfPt)/ totalAreaOfTriangle;
+      ptTriangle[0] = Tools::AreaOfTriangle( surfPt, vertex[1], vertex[2])/ totalAreaOfTriangle;
+      ptTriangle[1] = Tools::AreaOfTriangle( vertex[0], surfPt, vertex[2])/ totalAreaOfTriangle;
+      ptTriangle[2] = Tools::AreaOfTriangle( vertex[0], vertex[1], surfPt)/ totalAreaOfTriangle;
 
 //      float test = ptTriangle[0] + ptTriangle[1] + ptTriangle[2];
       // compute phong shading per vertex
@@ -307,8 +310,8 @@ public:
         vertColor[i] = Tools::GetPhongColor(
           matMgr.GetMaterial(material[i]),
           pLight,
-          GetNormal(pSurfPt),// normal[i],
-          Tools::Reflection(lookVector.GetDirection(),GetNormal(pSurfPt)),
+          planeNormal,// normal[i],
+          Tools::Reflection(lookVector.GetDirection(),planeNormal),
           lightVector,
           lookVector.GetDirection(),
           pDist);
@@ -319,7 +322,7 @@ public:
     return outColor;
   }
   
-  Vector GetNormal(Vector pSurfPt )
+  Vector GetNormal(Ray pRay, float intersectionTime)
   {
 /*    Vector normalOut(0.0, 0.0, 0.0);
     Vector coord = BarycentricCooef(pSurfPt);
@@ -336,11 +339,12 @@ public:
     return normalOuta;
   }
 
-  Vector GetReflectivity(Vector pSurfPt)
+  Vector GetReflectivity(Ray pRay, float intersectionTime)
   { // TODO: Base this off all vertcies
     SceneMaterialMgr &matMgr = SceneMaterialMgr::GetInstance();
     Vector out(0.0, 0.0, 0.0);
-    Vector coord = BarycentricCooef(pSurfPt);
+    Vector surfPt = pRay.GetPoint(intersectionTime);
+    Vector coord = BarycentricCooef(surfPt);
     Vector mat0Ref = matMgr.GetMaterial(material[0]).reflective;
     Vector mat1Ref = matMgr.GetMaterial(material[1]).reflective;
     Vector mat2Ref = matMgr.GetMaterial(material[2]).reflective;
@@ -363,7 +367,7 @@ public:
   std::string filename;
   std::vector<SceneTriangle> triangleList;
 
-  int triangleIntersectionIdx;
+//  int triangleIntersectionIdx;
 
   // -- Constructors & Destructors --
   SceneModel (void) : SceneObject ("Model", SceneObjectType::Model) {}
@@ -377,7 +381,7 @@ public:
   // - GetTriangle - Gets the nth SceneTriangle
   SceneTriangle *GetTriangle (int triIndex) { return &triangleList[triIndex]; }
 
-  void init(){triangleIntersectionIdx = -1;}
+//  void init(){triangleIntersectionIdx = -1;}
  
   float IntersectionTest(Ray pRay)
   {
@@ -385,46 +389,68 @@ public:
     for(int i = 0;i<triangleList.size();i++)
     {
       float potential_t = triangleList[i].IntersectionTest(pRay);
-      Vector normal = triangleList[i].GetNormal(triangleList[i].vertex[0]);
+      Vector normal = triangleList[i].GetNormal(pRay,0.0);
       if(potential_t > 0 && potential_t<t)
       {
         t = potential_t;
-        triangleIntersectionIdx = i; // found intersecton so store
+//        triangleIntersectionIdx = i; // found intersecton so store
       }
     }
     if(t == FLT_MAX)
       t = -1.0;
     return t;
   }
+  
+  int intersectingTriangleIdx(Ray pRay)
+  {
+    float t = FLT_MAX;
+    int triangleIntersectionIdx =-1;
+    for(int i = 0;i<triangleList.size();i++)
+    {
+      float potential_t = triangleList[i].IntersectionTest(pRay);
+      Vector normal = triangleList[i].GetNormal(pRay, 0.0);
+      if(potential_t > 0 && potential_t<t)
+      {
+        t = potential_t;
+        triangleIntersectionIdx = i; // found intersecton so store
+      }
+    }
+    return triangleIntersectionIdx;
+  }
 
-  Vector GetColor(SceneLight pLight, Vector pSurfPt, Ray lookVector, float pDist)
+  Vector GetColor(SceneLight pLight, Ray lookVector, float pDist)
   {
     Vector colorOut(0.0, 0.0, 0.0);
+    int triangleIntersectionIdx =  intersectingTriangleIdx(lookVector);
     if(triangleIntersectionIdx >= 0.0 && triangleIntersectionIdx < triangleList.size())
     {
-      colorOut = triangleList[triangleIntersectionIdx].GetColor(pLight, pSurfPt, lookVector, pDist);
+      colorOut = triangleList[triangleIntersectionIdx].GetColor(pLight, lookVector, pDist);
   //    triangleIntersectionIdx = -1;// reset since it was used
     }
     return colorOut;
   }
   
-  Vector GetNormal(Vector pSurfPt)
+  Vector GetNormal(Ray pRay, float intersectionTime)
   {
     Vector normOut(0.0, 0.0, 0.0);
+    int triangleIntersectionIdx =  intersectingTriangleIdx(pRay);
+//    Vector surfPt = pRay.GetPoint(intersectionTime);
     if(triangleIntersectionIdx >= 0.0 && triangleIntersectionIdx < triangleList.size())
     {
-      normOut = triangleList[triangleIntersectionIdx].GetNormal(pSurfPt);
+      normOut = triangleList[triangleIntersectionIdx].GetNormal(pRay,intersectionTime);
   //    triangleIntersectionIdx = -1;// reset since it was used
     }
     return normOut;
   }
 
-  Vector GetReflectivity(Vector pSurfPt)
+//  Vector GetReflectivity(Vector pSurfPt)
+  Vector GetReflectivity(Ray pRay, float intersectionTime)
   {
     Vector refOut(0.0, 0.0, 0.0);
+    int triangleIntersectionIdx =  intersectingTriangleIdx(pRay);
     if(triangleIntersectionIdx >= 0.0 && triangleIntersectionIdx < triangleList.size())
     {
-      refOut = triangleList[triangleIntersectionIdx].GetReflectivity(pSurfPt);
+      refOut = triangleList[triangleIntersectionIdx].GetReflectivity(pRay,intersectionTime);
     }
     return refOut;
   }
