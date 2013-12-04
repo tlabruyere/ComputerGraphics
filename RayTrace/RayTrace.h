@@ -109,7 +109,7 @@ private:
         Ray point2Light(pRay.GetPoint(pIntersectionTime)+m_Scene[curScene]->getObject(objIdx)->GetNormal(pRay, pIntersectionTime)*Tools::EPSILON,
           m_Scene[curScene]->GetLight(lightIdx).position - pRay.GetPoint(pIntersectionTime)); 
         float t = m_Scene[curScene]->getObject(objIdx)->IntersectionTest( point2Light);
-        if(t>0 && m_Scene[curScene]->getObject(objIdx)->GetRefractivity(pRay, t).x == 0.0f) // if t is found, then there is an object blocking the light
+        if(t>0) // if t is found, then there is an object blocking the light
         {
           objIntersection = true;
           break;
