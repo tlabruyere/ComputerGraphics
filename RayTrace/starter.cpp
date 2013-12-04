@@ -52,6 +52,8 @@ size_t g_X = 0, g_Y = 0;
 bool g_bRayTrace = false;
 bool g_bRenderNormal = true;
 
+int g_iMode = 1; // mode 1 = normal mode 0 = raytrace
+
 void myinit()
 {
   // Default to these camera settings
@@ -63,7 +65,7 @@ void myinit()
   glLoadIdentity();
 
   // Set the Scene Variable for the NormalRenderer
-  g_NormalRenderer.SetScene (&g_RayTrace.m_Scene);
+  g_NormalRenderer.SetScene (g_RayTrace.GetCurScene());
 
   glClearColor(0, 0, 0, 0);
 }
@@ -118,6 +120,7 @@ void menufunc(int value)
     // Start the Ray Tracing
     g_bRayTrace = true;
     g_bRenderNormal = false;
+    g_iMode = 0;
     break;
   case 1:
     // Render Normal
@@ -126,8 +129,21 @@ void menufunc(int value)
     g_Y = 0;
     g_bRenderNormal = true;
     glutPostRedisplay ();
+    g_iMode = 1;
     break;
   case 2:
+    g_RayTrace.incrementScene();
+    if(g_iMode == 1)//Render normal
+    {
+      myinit();
+      glutPostRedisplay();
+    }
+    else if( g_iMode ==0)
+    {
+      g_bRayTrace = true;
+    }
+    break;
+  case 3:
     // Quit Program
     exit(0);
     break;
@@ -138,42 +154,21 @@ void doIdle()
 {
   if (g_bRayTrace)
   {
+// To run single threaded comment out the next 2 lines
     concurrency::parallel_for(size_t(0), size_t(WINDOW_HEIGHT), [&](size_t g_Y)
     {
-//  omp_set_dynamic(0);  
-//  omp_set_num_threads(4);
-//#pragma omp parallel for  num_threads(4)
+// To run single threaded uncomment out the next 2 lines
 //    for(g_Y =0.0;g_Y<WINDOW_HEIGHT;g_Y++)
 //    {
       for(size_t X=0.0;X<WINDOW_WIDTH;X++)
       {
         g_ScreenBuffer[g_Y][X] = g_RayTrace.CalculatePixel (X, g_Y);
-//        glutPostRedisplay ();
-    // Move to the next pixel
-/*    g_X++;
-    if (g_X >= WINDOW_WIDTH)
-    {
-      // Move to the next row
-      g_X = 0;
-      g_Y++;
-
-      //You can uncomment the next line to see the raytrace update each step
-      glutPostRedisplay();
-    }
-
-    // Check for the end of the screen
-    if (g_Y >= WINDOW_HEIGHT)
-    {
-      g_bRayTrace = false;
-      glutPostRedisplay ();
-    }
-    */
       }
-    });
+    }
+// To run single threaded comment out the next line
+    );
     g_bRayTrace = false;
     glutPostRedisplay ();
-//    g_Y = WINDOW_HEIGHT;
-//    g_X = WINDOW_WIDTH;
   }
   else
   {
@@ -206,13 +201,20 @@ int main (int argc, char ** argv)
   //You will be creating a menu to load in scenes
   //The test.xml is the default scene and you will modify this code
 //  if (!g_RayTrace.m_Scene.Load ("test.xml"))
-  if (!g_RayTrace.m_Scene.Load ("snowman.xml"))
+//  if (!g_RayTrace.m_Scene.Load ("snowman.xml"))
+  if (!g_RayTrace.LoadScene("Scene1.xml"))
   {
     printf ("failed to load scene\n");
     exit(1);
   }
 
+  if (!g_RayTrace.LoadScene("Scene2.xml"))
+  {
+    printf ("failed to load scene\n");
+    exit(1);
+  }
   glutInit(&argc,argv);
+  g_iMode = 1;
 
   // create a window */
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
@@ -228,7 +230,8 @@ int main (int argc, char ** argv)
   glutSetMenu(g_iMenuId);
   glutAddMenuEntry("Render RayTrace",0);
   glutAddMenuEntry("Render Normal",1);
-  glutAddMenuEntry("Quit",2);
+  glutAddMenuEntry("Change Scene",2);
+  glutAddMenuEntry("Quit",3);
   glutAttachMenu(GLUT_RIGHT_BUTTON);
 
   // callback for mouse button changes */

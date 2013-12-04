@@ -21,6 +21,8 @@ RayTrace Class
 #include <vector>
 #define _USE_MATH_DEFINES 
 #include <math.h>
+#include <vector>
+#include <string>
 
 /*
 RayTrace Class - The class containing the function you will need to implement
@@ -37,12 +39,12 @@ private:
   //Ray ComputeStartRay( int screenX, int screenY)
   Ray ComputeStartRay( float screenX, float screenY)
   {
-    Vector lookVector = (m_Scene.GetCamera().GetTarget() - m_Scene.GetCamera().position).Normalize(); 
-    Vector camera_left = m_Scene.GetCamera().GetUp().Cross(lookVector).Normalize() ;
-    Vector camera_right = lookVector.Cross(m_Scene.GetCamera().GetUp()).Normalize() ;
+    Vector lookVector = (m_Scene[curScene]->GetCamera().GetTarget() - m_Scene[curScene]->GetCamera().position).Normalize(); 
+    Vector camera_left = m_Scene[curScene]->GetCamera().GetUp().Cross(lookVector).Normalize() ;
+    Vector camera_right = lookVector.Cross(m_Scene[curScene]->GetCamera().GetUp()).Normalize() ;
 
-    float H = 2.0 * m_Scene.GetCamera().GetNearClip()
-      * tan((m_Scene.GetCamera().GetFOV()/2.0)
+    float H = 2.0 * m_Scene[curScene]->GetCamera().GetNearClip()
+      * tan((m_Scene[curScene]->GetCamera().GetFOV()/2.0)
       *(M_PI/180));// + deltaScreenY;
     float W = H * ((float)WINDOW_WIDTH/WINDOW_HEIGHT);
 
@@ -52,28 +54,28 @@ private:
     float WOver2 = (deltaScreenX - W/2.0 );
     float HOver2 = (deltaScreenY - H/2.0 );
 
-    Vector centerOfImagePlane = m_Scene.GetCamera().GetPosition() 
-      + lookVector * m_Scene.GetCamera().GetNearClip();
+    Vector centerOfImagePlane = m_Scene[curScene]->GetCamera().GetPosition() 
+      + lookVector * m_Scene[curScene]->GetCamera().GetNearClip();
 
     Vector image_point = centerOfImagePlane 
-      + (m_Scene.GetCamera().GetUp() * HOver2)
-      + (camera_left * WOver2);
+      + (m_Scene[curScene]->GetCamera().GetUp() * HOver2)
+      - (camera_left * WOver2);
 
-    Vector ray_direction = image_point -  m_Scene.GetCamera().position;
-    return Ray(m_Scene.GetCamera().position, ray_direction, image_point);
+    Vector ray_direction = image_point -  m_Scene[curScene]->GetCamera().position;
+    return Ray(m_Scene[curScene]->GetCamera().position, ray_direction, image_point);
   }
 
   Vector Trace(Ray pRay, int pDepth, float pDist )
   {
     if(pDepth > TRACE_DEPTH)
     {
-      return m_Scene.GetBackground().color;
+      return m_Scene[curScene]->GetBackground().color;
     }
     int closestObj = -1;
     float closestDist = FLT_MAX;
-    for(int i = 0; i<m_Scene.GetNumObjects(); i++)
+    for(int i = 0; i<m_Scene[curScene]->GetNumObjects(); i++)
     {
-      float t = m_Scene.getObject(i)->IntersectionTest(pRay);
+      float t = m_Scene[curScene]->getObject(i)->IntersectionTest(pRay);
       if( t>=0.0 && t < closestDist)
       {
         closestDist = t;
@@ -83,29 +85,12 @@ private:
     if(closestObj >= 0) //intersection
     {
       Vector color = AccLightSource(pRay, closestObj, closestDist );
-      Vector surfPt = pRay.GetPoint(closestDist);
-      Vector surfPtNormal = m_Scene.getObject(closestObj)->GetNormal(pRay, closestDist);
-      Vector reflectionDir = Tools::Reflection( pRay.GetDirection(), surfPtNormal);
-
-//      Ray Reflection(surfPt + reflectionDir*Tools::EPSILON, reflectionDir);
-      Ray Reflection(surfPt + surfPtNormal*Tools::EPSILON, reflectionDir);
-//      Ray Reflection(surfPt , reflectionDir);
-      Vector reflectionColor = Trace(Reflection, pDepth + 1, pDist + closestDist);
-//      if(reflectionColor!= m_Scene.GetBackground().color)
-//      {
-	color = color + reflectionColor*m_Scene.getObject(closestObj)->GetReflectivity(pRay, closestDist);
-//      }
-
+      color = color+ ComputeReflection(pRay, closestObj, closestDist, pDepth);
       return  color;
     }
     else // no intersection off to infinity
     {
-      Vector color = m_Scene.GetBackground().color;
-/*      if(pDepth > 0) // hit object do not add color contibution for background
-      {
-        color = Vector(0.0, 0.0, 0.0);
-      }
-*/
+      Vector color = m_Scene[curScene]->GetBackground().color;
       return color;
     }
   
@@ -113,18 +98,16 @@ private:
 
   Vector AccLightSource(Ray pRay, int pObjIdx, float pIntersectionTime)
   {
-    Vector color;//= m_Scene.GetBackground().ambientLight;
-    for(int lightIdx = 0; lightIdx< m_Scene.GetNumLights();lightIdx++)
+    Vector color;//= m_Scene[curScene]->GetBackground().ambientLight;
+    for(int lightIdx = 0; lightIdx< m_Scene[curScene]->GetNumLights();lightIdx++)
     {
-//      Ray point2Light(pRay.GetPoint(pIntersectionTime)+m_Scene.GetLight(lightIdx).position*Tools::EPSILON,
-//        m_Scene.GetLight(lightIdx).position - pRay.GetPoint(pIntersectionTime)); 
       Vector surfPt =  pRay.GetPoint(pIntersectionTime);
       bool objIntersection = false;
-      for(int objIdx = 0; objIdx < m_Scene.GetNumObjects(); objIdx++)
+      for(int objIdx = 0; objIdx < m_Scene[curScene]->GetNumObjects(); objIdx++)
       {
-        Ray point2Light(pRay.GetPoint(pIntersectionTime)+m_Scene.getObject(objIdx)->GetNormal(pRay, pIntersectionTime)*Tools::EPSILON,
-          m_Scene.GetLight(lightIdx).position - pRay.GetPoint(pIntersectionTime)); 
-        float t = m_Scene.getObject(objIdx)->IntersectionTest( point2Light);
+        Ray point2Light(pRay.GetPoint(pIntersectionTime)+m_Scene[curScene]->getObject(objIdx)->GetNormal(pRay, pIntersectionTime)*Tools::EPSILON,
+          m_Scene[curScene]->GetLight(lightIdx).position - pRay.GetPoint(pIntersectionTime)); 
+        float t = m_Scene[curScene]->getObject(objIdx)->IntersectionTest( point2Light);
         if(t>0) // if t is found, then there is an object blocking the light
         {
           objIntersection = true;
@@ -133,22 +116,62 @@ private:
       }
       if(!objIntersection)
       {
-        color = color + m_Scene.getObject(pObjIdx)->GetColor(m_Scene.GetLight(lightIdx), pRay, pIntersectionTime) /m_Scene.GetNumLights();
+        color = color + m_Scene[curScene]->getObject(pObjIdx)->GetColor(m_Scene[curScene]->GetLight(lightIdx), pRay, pIntersectionTime) /m_Scene[curScene]->GetNumLights();
       }
     }
     return color;
   }
    
+  Vector ComputeReflection(Ray pRay, int pObjIdx, float pIntersectionTime, int traceDepth)
+  {
+    Vector color(0.0,0.0,0.0);
+    Vector objReflectivity = m_Scene[curScene]->getObject(pObjIdx)->GetReflectivity(pRay, pIntersectionTime);
+    if(objReflectivity.Magnitude() > 0.0)
+    {
+      Vector surfPt = pRay.GetPoint(pIntersectionTime);
+      Vector surfPtNormal = m_Scene[curScene]->getObject(pObjIdx)->GetNormal(pRay, pIntersectionTime);
+      Vector reflectionDir = Tools::Reflection( pRay.GetDirection(), surfPtNormal);
+      Ray Reflection(surfPt + surfPtNormal*Tools::EPSILON, reflectionDir);
+      Vector reflectionColor = Trace(Reflection, traceDepth + 1, pIntersectionTime);//pDist + closestDist);
+      color =  reflectionColor*m_Scene[curScene]->getObject(pObjIdx)->GetReflectivity(pRay, pIntersectionTime);
+    }
+    return color;
+  }
+
+  Vector ComputeRefraction(Ray pRay, int pObjIdx, float pIntersectionTime, int traceDepth)
+  {
+    Vector color(0.0,0.0,0.0);
+    //Vector objRefractivity = m_Scene[curScene]->getObject(pObjIdx)->GetRefractivity(pRay, pIntersectionTime);
+    //if(objRefractivity.Magnitude() > 0.0)
+    //{
+    //  Vector surfPt = pRay.GetPoint(pIntersectionTime);
+    //  Vector surfPtNormal = m_Scene[curScene]->getObject(pObjIdx)->GetNormal(pRay, pIntersectionTime);
+
+
+
+    //}
+    return color;
+
+  }
 
 
 
 public:
   //- Scene Variable for the Scene Definition - 
-  Scene m_Scene;
+  std::vector<Scene*> m_Scene;
+  int curScene;
 
   // -- Constructors & Destructors --
-  RayTrace (void) {}
-  ~RayTrace (void) {}
+  RayTrace (void) {curScene = 0;}
+  ~RayTrace (void) 
+  {
+    for(int i =0;i<m_Scene.size();i++)
+    {
+      if(m_Scene[i] != nullptr)
+	delete m_Scene[i];
+      m_Scene[i] = nullptr;
+    }
+  }
 
   // -- Main Functions --
   // - CalculatePixel - Returns the Computed Pixel for that screen coordinate
@@ -166,7 +189,7 @@ public:
       coordinates and figure out how/where this ray intersects with 
       the objects in the scene descriptor.
       The Scene Class exposes all of the scene's variables for you 
-      through its functions such as m_Scene.GetBackground (), m_Scene.GetNumLights (), 
+      through its functions such as m_Scene[curScene]->GetBackground (), m_Scene[curScene]->GetNumLights (), 
       etc. so you will need to use those to learn about the World.
 
     To determine if your ray intersects with an object in the scene, 
@@ -193,16 +216,15 @@ public:
       return Vector (0.0f, 0.0f, 0.0f);
     }
 
-    // Until this function is implemented, return white
-/*    return Vector (1.0f, 1.0f, 1.0f);
-    Vector retVecPortion[5];
+/*    Vector retVecPortion[5];
     retVecPortion[0] =  Trace(ComputeStartRay(screenX, screenY), 0, 0.0);
     retVecPortion[1] =  Trace(ComputeStartRay(screenX+1, screenY), 0, 0.0);
     retVecPortion[2] =  Trace(ComputeStartRay(screenX, screenY+1), 0, 0.0);
     retVecPortion[3] =  Trace(ComputeStartRay(screenX+1, screenY+1), 0, 0.0);
     retVecPortion[4] =  Trace(ComputeStartRay(screenX+0.5, screenY+0.5), 0, 0.0);
-*/
-    //Vector retVec = (retVecPortion[0] + retVecPortion[1] + retVecPortion[2] + retVecPortion[3] + retVecPortion[4] )/ 5;
+
+    Vector retVec = (retVecPortion[0] + retVecPortion[1] + retVecPortion[2] + retVecPortion[3] + retVecPortion[4] )/ 5;
+    */
     Vector retVec = Trace(ComputeStartRay(screenX, screenY), 0, 0.0);
 
 
@@ -221,6 +243,29 @@ public:
       retVec.z = 1.0;
     }
     return retVec;
+  }
+
+  void incrementScene()
+  {
+    if(curScene +1 < m_Scene.size())
+    {
+      curScene++;
+    }
+    else
+      curScene = 0;
+  }
+
+  bool LoadScene( std::string xmlFile)
+  {
+    Scene* scene = new Scene;
+    bool loaded = scene->Load((char*)xmlFile.c_str());
+    m_Scene.push_back(scene);
+    return loaded;
+  }
+
+  Scene* GetCurScene()
+  {
+    return m_Scene[curScene];
   }
 };
 

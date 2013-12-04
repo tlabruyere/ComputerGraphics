@@ -81,8 +81,8 @@
     <ClCompile Include="xmlParser.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="snowman.xml" />
-    <Xml Include="test.xml">
+    <Xml Include="Scene1.xml" />
+    <Xml Include="Scene2.xml">
       <SubType>Designer</SubType>
     </Xml>
   </ItemGroup>

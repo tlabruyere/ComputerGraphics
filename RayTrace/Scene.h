@@ -138,6 +138,8 @@ public:
   {
     return Vector(0.0,0.0,0.0);
   }
+  
+  virtual Vector GetRefractivity(Ray pRay, float intersectionTime) =0;
 };
 
 /*
@@ -205,6 +207,12 @@ public:
   {
     SceneMaterialMgr &matMgr = SceneMaterialMgr::GetInstance();
     return matMgr.GetMaterial(material).reflective;
+  }
+
+  Vector GetRefractivity(Ray pRay, float intersectionTime)
+  {
+    SceneMaterialMgr &matMgr = SceneMaterialMgr::GetInstance();
+    return matMgr.GetMaterial(material).refraction_index;
   }
 };
 
@@ -354,6 +362,22 @@ public:
     out.z = mat0Ref.z*coord.z + mat1Ref.z*coord.z + mat2Ref.z*coord.z;
     return mat0Ref;
   }
+
+  Vector GetRefractivity(Ray pRay, float intersectionTime)
+  {
+    SceneMaterialMgr &matMgr = SceneMaterialMgr::GetInstance();
+    Vector out(0.0, 0.0, 0.0);
+    Vector surfPt = pRay.GetPoint(intersectionTime);
+    Vector coord = BarycentricCooef(surfPt);
+    Vector mat0Ref = matMgr.GetMaterial(material[0]).refraction_index;
+    Vector mat1Ref = matMgr.GetMaterial(material[1]).refraction_index;
+    Vector mat2Ref = matMgr.GetMaterial(material[2]).refraction_index;
+
+    out.x = mat0Ref.x*coord.x + mat1Ref.x*coord.y + mat2Ref.x*coord.y;
+    out.y = mat0Ref.y*coord.y + mat1Ref.y*coord.y + mat2Ref.y*coord.y;
+    out.z = mat0Ref.z*coord.z + mat1Ref.z*coord.z + mat2Ref.z*coord.z;
+    return mat0Ref;
+  }
 };
 
 /*
@@ -454,6 +478,18 @@ public:
     }
     return refOut;
   }
+
+  Vector GetRefractivity(Ray pRay, float intersectionTime)
+  {
+    Vector refOut(0.0, 0.0, 0.0);
+    int triangleIntersectionIdx =  intersectingTriangleIdx(pRay);
+    if(triangleIntersectionIdx >= 0.0 && triangleIntersectionIdx < triangleList.size())
+    {
+      refOut = triangleList[triangleIntersectionIdx].GetRefractivity(pRay,intersectionTime);
+    }
+    return refOut;
+  }
+
 
 };
 

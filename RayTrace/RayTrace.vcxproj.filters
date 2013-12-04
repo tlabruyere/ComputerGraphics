@@ -64,7 +64,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="test.xml" />
-    <Xml Include="snowman.xml" />
+    <Xml Include="Scene1.xml" />
+    <Xml Include="Scene2.xml" />
   </ItemGroup>
 </Project>

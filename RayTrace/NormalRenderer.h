@@ -74,6 +74,7 @@ public:
   {
     if (m_pScene)
     {
+      UnsetRenderStates ();
       // Prepare Render States
       SetRenderStates ();
 
@@ -95,6 +96,17 @@ public:
         glLightf (GL_LIGHT0 + n, GL_QUADRATIC_ATTENUATION, sceneLight.attenuationQuadratic);
         glLightfv(GL_LIGHT0 + n, GL_DIFFUSE, (GLfloat *)&sceneLight.color);
         glLightfv(GL_LIGHT0 + n, GL_POSITION, (GLfloat *)&sceneLight.position);
+      }
+      Vector zero(0.0,0.0,0.0);
+
+      for (unsigned int n = numLights; n < 8; n++)
+      {
+        glLightfv(GL_LIGHT0 + n, GL_SPECULAR, (GLfloat *)&zero);
+        glLightf (GL_LIGHT0 + n, GL_CONSTANT_ATTENUATION, zero.x);
+        glLightf (GL_LIGHT0 + n, GL_LINEAR_ATTENUATION, zero.x);
+        glLightf (GL_LIGHT0 + n, GL_QUADRATIC_ATTENUATION, zero.x);
+        glLightfv(GL_LIGHT0 + n, GL_DIFFUSE, (GLfloat *)&zero);
+        glLightfv(GL_LIGHT0 + n, GL_POSITION, (GLfloat *)&zero);
       }
 
       // Get the Camera

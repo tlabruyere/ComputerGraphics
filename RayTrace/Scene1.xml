@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
 <!-- Scene Description in XML -->
-<scene desc="Snowman"
+<scene desc="Scene1"
 	   author="Tom LaBruyere">
   <!-- Background Color and Ambient Light Property -->
   <background>
@@ -17,8 +17,8 @@
     <up x="0.0" y="1.0" z="0.0"/>
   </camera-->
   <camera fieldOfView="45.0" nearClip="0.1" farClip="100.0">
-    <position x="0.0" y="5.0" z="15.0"/>
-    <target x="0.0" y="0.0" z="0.0"/>
+    <position x="0.0" y="5.0" z="10.0"/>
+    <target x="0.0" y="0.0" z="-5.0"/>
     <up x="0.0" y="1.0" z="0.0"/>
   </camera>
 
@@ -28,7 +28,7 @@
     <!-- Light Description, Color & Position -->
     <light>
       <color red="1.0" green="1.0" blue="1.0"/>
-      <position x="5.0" y="10.0" z="5.0"/>
+      <position x="5.0" y="10.0" z="10.0"/>
       <attenuation constant="0.10" linear="0.03" quadratic="0.00"/>
     </light>
     <!--light>
@@ -97,6 +97,14 @@
       <specular red="0.0" green="0.0" blue="0.0" shininess="100.0"/>
       <reflective red="1.0" green="1.0" blue="1.0"/>
     </material>
+
+    <material name="Glass">
+      <texture filename=""/>
+      <diffuse red="0.0" green="0.0" blue="0.0"/>
+      <specular red="0.0" green="0.0" blue="0.0" shininess="0.0"/>
+      <refraction_index red="1.5" green="1.5" blue="1.5"/>
+    </material>
+ 
   </material_list>
 
   <!-- List of Scene Objects -->
@@ -125,7 +133,7 @@
       <scale x="1.0" y="1.0" z="1.0"/>
       <rotation x="0.0" y="0.0" z="0.0"/>
       <position x="0.0" y="0.0" z="0.0"/>
-      <center x="-3.0" y="4.0" z="1.0"/>
+      <center x="-3.0" y="4.0" z="0.0"/>
     </sphere>
  
     
@@ -136,17 +144,17 @@
       <position x="0.0" y="0.0" z="0.0"/>
 
       <vertex index="0" material="CHECKERBOARD">
-        <position x="-10.0" y="0.0" z="10.0"/>
+        <position x="-20.0" y="0.0" z="20.0"/>
         <normal x="0.0" y="1.0" z="0.0"/>
         <texture u="0.0" v="0.0"/>
       </vertex>
       <vertex index="1" material="CHECKERBOARD">
-        <position x="10.0" y="0.0" z="10.0"/>
+        <position x="20.0" y="0.0" z="20.0"/>
         <normal x="0.0" y="1.0" z="0.0"/>
         <texture u="1.0" v="0.0"/>
       </vertex>
       <vertex index="2" material="CHECKERBOARD">
-        <position x="-10.0" y="0.0" z="-10.0"/>
+        <position x="-20.0" y="0.0" z="-20.0"/>
         <normal x="0.0" y="1.0" z="0.0"/>
         <texture u="0.0" v="1.0"/>
       </vertex>
@@ -156,17 +164,17 @@
       <rotation x="0.0" y="0.0" z="0.0"/>
       <position x="0.0" y="0.0" z="0.0"/>
       <vertex index="0" material="CHECKERBOARD">
-        <position x="-10.0" y="0.0" z="-10.0"/>
+        <position x="-20.0" y="0.0" z="-20.0"/>
         <normal x="0.0" y="1.0" z="0.0"/>
         <texture u="0.0" v="1.0"/>
       </vertex>
       <vertex index="1" material="CHECKERBOARD">
-        <position x="10.0" y="0.0" z="10.0"/>
+        <position x="20.0" y="0.0" z="20.0"/>
         <normal x="0.0" y="1.0" z="0.0"/>
         <texture u="1.0" v="0.0"/>
       </vertex>
       <vertex index="2" material="CHECKERBOARD">
-        <position x="10.0" y="0.0" z="-10.0"/>
+        <position x="20.0" y="0.0" z="-20.0"/>
         <normal x="0.0" y="1.0" z="0.0"/>
         <texture u="1.0" v="1.0"/>
       </vertex>
@@ -258,12 +266,6 @@
 
 
     <!-- External Model Object [Collection of Triangles] -->
-    <!-- Model in 3DS File Format -->
-    <!--model filename="objects/cube.3ds" name="cube"  material="Mirror">
-      <scale x="1.0" y="1.0" z="1.0"/>
-      <rotation x="0.0" y="0.0" z="0.0"/>
-      <position x="3.0" y="1.0" z="1.0"/>
-    </model-->
     <!-- Model in OBJ File Format -->
     <model filename="objects/cube.obj" name="cube"  material="Brass">
       <scale x="1.0" y="1.0" z="1.0"/>
