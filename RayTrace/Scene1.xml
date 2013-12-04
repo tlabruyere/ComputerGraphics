@@ -31,11 +31,6 @@
       <position x="5.0" y="10.0" z="10.0"/>
       <attenuation constant="0.10" linear="0.03" quadratic="0.00"/>
     </light>
-    <!--light>
-      <color red="1.0" green="1.0" blue="1.0"/>
-      <position x="-5.0" y="10.0" z="5.0"/>
-      <attenuation constant="0.10" linear="0.03" quadratic="0.00"/>
-    </light-->
   </light_list>
 
   <!-- Material Type Collection -->
@@ -50,7 +45,7 @@
     <material name="Green">
       <texture filename=""/>
       <diffuse red="0.0" green="1.0" blue="0.0"/>
-      <specular red="0.0" green="0.50" blue="0.0" shininess="2.0"/>
+      <specular red="0.0" green="0.50" blue="0.0" shininess="200.0"/>
       <reflective red="0.0" green="0.0" blue="0.0"/>
     </material>
 
@@ -75,8 +70,8 @@
     <material name="Brass">
       <texture filename=""/>
       <diffuse red="0.780392" green="0.568627" blue="0.113725"/>
-      <specular red="0.992157" green="0.941176" blue="0.807843" shininess="27.89740"/>
-      <!--specular red="0.992157" green="0.941176" blue="0.807843" shininess="200.0"/-->
+      <!--specular red="0.992157" green="0.941176" blue="0.807843" shininess="27.89740"/!-->
+      <specular red="0.992157" green="0.941176" blue="0.807843" shininess="200.0"/>
       <transparent red="0.0" green="0.0" blue="0.0"/>
       <reflective red="0.05" green="0.05" blue="0.05"/>
       <refraction_index red="0.0" green="0.0" blue="0.0"/>
@@ -135,8 +130,15 @@
       <position x="0.0" y="0.0" z="0.0"/>
       <center x="-3.0" y="4.0" z="0.0"/>
     </sphere>
+
+    <!--Glass is not working properly. currently it it mirroring-->
+    <!--sphere name="SphereGlassr" material="Glass" radius="1.0">
+      <scale x="1.0" y="1.0" z="1.0"/>
+      <rotation x="0.0" y="0.0" z="0.0"/>
+      <position x="0.0" y="0.0" z="0.0"/>
+      <center x="0.0" y="4.0" z="3.0"/>
+    </sphere!-->
  
-    
     <!-- GroundPlane Object -->
     <triangle name="GroundPlaneTri1">
       <scale x="1.0" y="1.0" z="1.0"/>
@@ -271,7 +273,6 @@
       <scale x="1.0" y="1.0" z="1.0"/>
       <rotation x="0.0" y="0.0" z="0.0"/>
       <position x="3.0" y="1" z="0.0"/>
-      <!--position x="0.0" y="0" z="0.0"/!-->
     </model>
 
   </object_list>

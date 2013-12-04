@@ -13,12 +13,14 @@
 //	to 640x480 for submission.
 //#define WINDOW_WIDTH 320
 //#define WINDOW_HEIGHT 240
-//#define WINDOW_WIDTH 2 
-//#define WINDOW_HEIGHT 2
+//#define WINDOW_WIDTH 20 
+//#define WINDOW_HEIGHT 20
 //#define WINDOW_WIDTH 1600
 //#define WINDOW_HEIGHT 900
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
+//#define WINDOW_WIDTH 1920 
+//#define WINDOW_HEIGHT 1080
 
 #include "Scene.h"
 #include "RayTrace.h"

@@ -182,8 +182,8 @@ public:
   {
     Vector surfPt = lookVector.GetPoint(pDist);
     Vector ptNormal = GetNormal(lookVector, pDist);
-    Vector ReflectionVec = (ptNormal * 2.0 * (max(lookVector.GetDirection().Dot(ptNormal),0.0)) - lookVector.GetDirection()).Normalize();
     Vector lightVector = (pLight.position-surfPt).Normalize();
+    Vector ReflectionVec = Tools::Reflection(lightVector,ptNormal); // (ptNormal * 2.0 * (max(lookVector.GetDirection().Dot(ptNormal),0.0)) - lookVector.GetDirection()).Normalize();
     SceneMaterialMgr& materialMgr = SceneMaterialMgr::GetInstance();
 
     return Tools::GetPhongColor(
@@ -194,6 +194,7 @@ public:
       lightVector,
       lookVector.GetDirection(),
       pDist);
+
 
   }
  

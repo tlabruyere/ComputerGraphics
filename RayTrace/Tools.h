@@ -24,18 +24,20 @@ public:
   
   static float LightAttenuation(SceneLight pLight, float pDist)
   {
-    return ( 1.0/ (pLight.attenuationConstant 
+/*    return ( 1.0/ (pLight.attenuationConstant 
       + pLight.attenuationLinear * pDist 
       + (pLight.attenuationQuadratic * pDist * pDist)));
-//    return 1.0;
+      */
+    return 1.0;
   }
 
   static Vector GetPhongColor(SceneMaterial pMat, SceneLight pLight, Vector pNormal, Vector pReflection, Vector pLightVec, Vector pLookVec, float pDist)
   {
     Vector diffuse = Diffuse(pMat.diffuse, pLight.color, pLightVec, pNormal);
-    Vector specular = Specular(pMat.specular, pMat.shininess, pLight.color, pLookVec, pReflection);
+    Vector specular = Specular(pMat.specular, pMat.shininess, pLight.color, pLightVec, pReflection);
     float lightAtt = LightAttenuation(pLight, pDist);
     return (diffuse + specular)*lightAtt;
+    //return  specular;
 
   }
 
@@ -55,7 +57,7 @@ public:
   
   static Vector Specular(Vector pMatSpec, float pMatShine, Vector pLightColor, Vector pLookDir, Vector pReflection)
   {
-    return pMatSpec * pLightColor * pow(max(pLookDir.Dot(pReflection),0.0), pMatShine);
+    return pMatSpec * pLightColor * pow(max((pLookDir).Dot(pReflection),0.0), pMatShine);
   }
 
   static float AreaOfTriangle( Vector p0, Vector p1, Vector p2)

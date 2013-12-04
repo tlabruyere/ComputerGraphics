@@ -86,6 +86,7 @@ private:
     {
       Vector color = AccLightSource(pRay, closestObj, closestDist );
       color = color+ ComputeReflection(pRay, closestObj, closestDist, pDepth);
+      color = color+ ComputeRefraction(pRay, closestObj, closestDist, pDepth);
       return  color;
     }
     else // no intersection off to infinity
@@ -108,7 +109,7 @@ private:
         Ray point2Light(pRay.GetPoint(pIntersectionTime)+m_Scene[curScene]->getObject(objIdx)->GetNormal(pRay, pIntersectionTime)*Tools::EPSILON,
           m_Scene[curScene]->GetLight(lightIdx).position - pRay.GetPoint(pIntersectionTime)); 
         float t = m_Scene[curScene]->getObject(objIdx)->IntersectionTest( point2Light);
-        if(t>0) // if t is found, then there is an object blocking the light
+        if(t>0 && m_Scene[curScene]->getObject(objIdx)->GetRefractivity(pRay, t).x == 0.0f) // if t is found, then there is an object blocking the light
         {
           objIntersection = true;
           break;
@@ -141,19 +142,70 @@ private:
   Vector ComputeRefraction(Ray pRay, int pObjIdx, float pIntersectionTime, int traceDepth)
   {
     Vector color(0.0,0.0,0.0);
-    //Vector objRefractivity = m_Scene[curScene]->getObject(pObjIdx)->GetRefractivity(pRay, pIntersectionTime);
-    //if(objRefractivity.Magnitude() > 0.0)
-    //{
-    //  Vector surfPt = pRay.GetPoint(pIntersectionTime);
-    //  Vector surfPtNormal = m_Scene[curScene]->getObject(pObjIdx)->GetNormal(pRay, pIntersectionTime);
+/*    Vector objRefractivity = m_Scene[curScene]->getObject(pObjIdx)->GetRefractivity(pRay, pIntersectionTime);
+//    if(objRefractivity.Magnitude() > 0.0)
+    if(objRefractivity.x > 0.0)
+    {
+      Vector surfPt = pRay.GetPoint(pIntersectionTime);
+      Vector surfPtNormal = m_Scene[curScene]->getObject(pObjIdx)->GetNormal(pRay, pIntersectionTime);
+      // assume always going either from air to material or material to air. For easyness
+      float rayDotNormal = pRay.GetDirection().Dot(surfPtNormal);
+      float ang = acos(rayDotNormal);
+      // compute coeff
+      float snellN1N2;
+      if(abs(ang) < M_PI)//entering material
+      {
+        snellN1N2 = 1.0/objRefractivity.x;
+      }
+      else // leaving material
+      {
+        snellN1N2 = objRefractivity.x;
+	// normal need to be inword
+	surfPtNormal = surfPtNormal*-1.0;
+      }
 
+      // give me transmission vector
+      Vector trans = pRay.GetDirection()*snellN1N2 
+        - surfPtNormal * (snellN1N2 * rayDotNormal - sqrt(1-((snellN1N2*snellN1N2)*(sin(rayDotNormal)*sin(rayDotNormal)))));
+      Ray Refraction(surfPt + surfPtNormal*Tools::EPSILON * -1.0, trans);
+      Vector refractionColor = Trace(Refraction, traceDepth + 1, pIntersectionTime);
+      color = refractionColor;
+    }
+    */
+     Vector objRefractivity = m_Scene[curScene]->getObject(pObjIdx)->GetRefractivity(pRay, pIntersectionTime);
+    if(objRefractivity.x > 0.0)
+    {
+      Vector surfPt = pRay.GetPoint(pIntersectionTime);
+      Vector surfPtNormal = m_Scene[curScene]->getObject(pObjIdx)->GetNormal(pRay, pIntersectionTime) * result(pRay, pObjIdx, surfPt);
+      // compute coeff
+      float snellN1N2 = 1.0/objRefractivity.x;
 
-
-    //}
+      float cosl = -1.0* surfPtNormal.Dot(pRay.GetDirection());
+      float cosT2 = 1.0 - snellN1N2 * snellN1N2 *(1.0 - cosl *cosl);
+      if(cosT2>0.0)
+      {
+        Vector trans = pRay.GetDirection()*snellN1N2 + surfPtNormal* (snellN1N2 * cosl - sqrt(cosT2));
+        Ray Refraction(surfPt + trans*Tools::EPSILON , trans);
+        Vector refractionColor = Trace(Refraction, traceDepth + 1, pIntersectionTime);
+        color = refractionColor;
+      }
+    }
     return color;
 
   }
 
+  float result(Ray pRay, int objIdx, Vector pSurfPt)
+  {
+    Ray oppDir(pSurfPt+pRay.GetDirection()*Tools::EPSILON, pRay.GetDirection()*-1.0);
+
+    float retVal;
+    float t = m_Scene[curScene]->getObject(objIdx)->IntersectionTest(oppDir);
+    if(t>0) //  self intersection
+      retVal = -1.0;
+    else 
+      retVal = 1.0;
+    return retVal;
+  }
 
 
 public:
