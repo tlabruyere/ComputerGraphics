@@ -1,4 +1,6 @@
-#pragma once
+#ifndef __RAY_H__
+#define __RAY_H__
+
 #include <string>
 #include <sstream>
 #include "Utils.h"
@@ -42,3 +44,4 @@ public:
 
 };
 
+#endif

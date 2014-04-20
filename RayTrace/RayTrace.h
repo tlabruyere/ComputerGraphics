@@ -6,8 +6,8 @@ This file defines the following:
 RayTrace Class
 */
 
-#ifndef RAYTRACE_H
-#define RAYTRACE_H
+#ifndef __RAYTRACE_H__
+#define __RAYTRACE_H__
 
 #include <stdio.h>
 #include <stdlib.h>
