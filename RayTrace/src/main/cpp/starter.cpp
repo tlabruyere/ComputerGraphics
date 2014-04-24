@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <windows.h>
+//#include <windows.h>
 #include "GL/gl.h"
 #include "GL/glu.h"
 #include "GL/glut.h"
@@ -25,8 +25,8 @@
 #include "Scene.h"
 #include "RayTrace.h"
 #include "NormalRenderer.h"
-#include <windows.h>
-#include <ppl.h>
+//#include <windows.h>
+//#include <ppl.h>
 //#include <omp.h>
 
 // --- Global State Variables --- 
@@ -157,18 +157,18 @@ void doIdle()
   if (g_bRayTrace)
   {
 // To run single threaded comment out the next 2 lines
-    concurrency::parallel_for(size_t(0), size_t(WINDOW_HEIGHT), [&](size_t g_Y)
-    {
-// To run single threaded uncomment out the next 2 lines
-//    for(g_Y =0.0;g_Y<WINDOW_HEIGHT;g_Y++)
+//    concurrency::parallel_for(size_t(0), size_t(WINDOW_HEIGHT), [&](size_t g_Y)
 //    {
+// To run single threaded uncomment out the next 2 lines
+    for(g_Y =0.0;g_Y<WINDOW_HEIGHT;g_Y++)
+    {
       for(size_t X=0.0;X<WINDOW_WIDTH;X++)
       {
         g_ScreenBuffer[g_Y][X] = g_RayTrace.CalculatePixel (X, g_Y);
       }
     }
 // To run single threaded comment out the next line
-    );
+//    );
     g_bRayTrace = false;
     glutPostRedisplay ();
   }

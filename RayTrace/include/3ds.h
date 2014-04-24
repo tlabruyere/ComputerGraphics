@@ -286,7 +286,7 @@ protected:
 // DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG
 // DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG
 // Debugging Function
-void debug_op(char *s);
+void debug_op(const char *s);
 void DisplayRawData(C3DS* pObj);
 void DisplayRawAnimationData(C3DS* pObj);
 

@@ -7,6 +7,8 @@
 #include "Utils.h"
 #include "SceneMaterial.h"
 #include "SceneLight.h"
+#include <cfloat>
+#include <cstring>
 
 class Tools
 {
@@ -52,12 +54,12 @@ public:
 
   static Vector Diffuse(Vector pMatDiffuse, Vector pLightColor, Vector pLightDir, Vector pNormal)
   {
-    return pMatDiffuse * pLightColor * max( pLightDir.Dot(pNormal), 0.0);
+    return pMatDiffuse * pLightColor * std::max( pLightDir.Dot(pNormal), 0.0f);
   }
   
   static Vector Specular(Vector pMatSpec, float pMatShine, Vector pLightColor, Vector pLookDir, Vector pReflection)
   {
-    return pMatSpec * pLightColor * pow(max((pLookDir).Dot(pReflection),0.0), pMatShine);
+    return pMatSpec * pLightColor * pow(std::max((pLookDir).Dot(pReflection),0.0f), pMatShine);
   }
 
   static float AreaOfTriangle( Vector p0, Vector p1, Vector p2)

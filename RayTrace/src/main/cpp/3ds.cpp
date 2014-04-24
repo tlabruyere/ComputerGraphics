@@ -10,6 +10,7 @@
 /***************************************************************************/
 
 #include "3ds.h"
+#include <cstring>
 
 C3DS::C3DS(void)
 {
@@ -688,7 +689,7 @@ raw 3ds information to a file to look for code errors.
 
 // Debugging Function to dump raw valeus to a file
 
-void debug_op(char *s)
+void debug_op(const char *s)
 {
   FILE *fp;
   fp = fopen("t.txt", "a+");
