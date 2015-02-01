@@ -822,7 +822,7 @@ bool Scene::Load (char *filename)
 
           std::ifstream infile (tempModel->filename.c_str());
 
-          if (infile == NULL)
+          if (infile.fail())
           {
             printf ("Error loading .obj file\n");
             return false;

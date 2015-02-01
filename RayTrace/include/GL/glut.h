@@ -133,9 +133,11 @@ typedef unsigned short wchar_t;
 # define GLUTCALLBACK __cdecl
 
 #endif  /* _WIN32 */
-
+#ifdef __APPLE__
 #include <GL/gl.h>
+#elif
 #include <GL/glu.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {

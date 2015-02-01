@@ -17,7 +17,9 @@ This can be a good reference in learning to access the scene objects
 #include <string>
 
 #include "Utils.h"
-
+#ifdef __APPLE__
+  #include <OpenGL/glu.h>
+#endif
 /*
 NormalRenderer Class - The class that will render the scene as normal objects in real-time
 
