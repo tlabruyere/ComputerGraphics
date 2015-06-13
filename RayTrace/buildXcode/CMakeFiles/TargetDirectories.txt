@@ -1,0 +1,3 @@
+/Users/telabru/Source/ComputerGraphics/RayTrace/buildXcode/CMakeFiles/ALL_BUILD.dir
+/Users/telabru/Source/ComputerGraphics/RayTrace/buildXcode/src/main/cpp/CMakeFiles/RayTrace.dir
+/Users/telabru/Source/ComputerGraphics/RayTrace/buildXcode/CMakeFiles/ZERO_CHECK.dir

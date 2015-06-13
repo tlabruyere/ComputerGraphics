@@ -1,0 +1,706 @@
+// !$*UTF8*$!
+{
+       archiveVersion = 1;
+       classes = {
+       };
+       objectVersion = 46;
+       objects = {
+
+/* Begin PBXAggregateTarget section */
+              BB9DFA978D9644029B889CE1 /* ALL_BUILD */ = {
+                     isa = PBXAggregateTarget;
+                     buildConfigurationList = A5F3A3BEC0B24AABAB40EC8A /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+                     buildPhases = (
+                            42E37BD267EC4876A0458191 /* CMake Rules */,
+                     );
+                     dependencies = (
+                            035DA08C7A2F451D9BB7118C /* PBXTargetDependency */,
+                            908FCB5E09D44A3EAC7571C7 /* PBXTargetDependency */,
+                     );
+                     name = ALL_BUILD;
+                     productName = ALL_BUILD;
+              };
+              8D32157CD2D2432D9F28BC0E /* ZERO_CHECK */ = {
+                     isa = PBXAggregateTarget;
+                     buildConfigurationList = 6F2EB5A348464B69BD6E4618 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+                     buildPhases = (
+                            FD492B517AF445EE986FF3F3 /* CMake Rules */,
+                     );
+                     dependencies = (
+                     );
+                     name = ZERO_CHECK;
+                     productName = ZERO_CHECK;
+              };
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+3795866BC6794937BF139E81 /* /Users/telabru/Source/ComputerGraphics/RayTrace/src/main/cpp/3ds.cpp */ = {isa = PBXBuildFile; fileRef = B88D35648CC8420281CB7ECD /* /Users/telabru/Source/ComputerGraphics/RayTrace/src/main/cpp/3ds.cpp */; settings = { COMPILER_FLAGS = ""; }; };
+3761325513C9475F8FFCA424 /* /Users/telabru/Source/ComputerGraphics/RayTrace/src/main/cpp/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 53612C86D92F457083221976 /* /Users/telabru/Source/ComputerGraphics/RayTrace/src/main/cpp/CMakeLists.txt */; settings = { COMPILER_FLAGS = ""; }; };
+19F63D78BF9B4469881B2AF5 /* /Users/telabru/Source/ComputerGraphics/RayTrace/src/main/cpp/starter.cpp */ = {isa = PBXBuildFile; fileRef = 2A672086D9224B6F8C0085DF /* /Users/telabru/Source/ComputerGraphics/RayTrace/src/main/cpp/starter.cpp */; settings = { COMPILER_FLAGS = ""; }; };
+C62B3302A0324E09862A9189 /* /Users/telabru/Source/ComputerGraphics/RayTrace/src/main/cpp/xmlParser.cpp */ = {isa = PBXBuildFile; fileRef = E39CE8FDB4334D32953249F4 /* /Users/telabru/Source/ComputerGraphics/RayTrace/src/main/cpp/xmlParser.cpp */; settings = { COMPILER_FLAGS = ""; }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildStyle section */
+              0D5A296045EF4E4EA040A50C /*  */ = {
+                     isa = PBXBuildStyle;
+              };
+              BEC4282B8405457E98CDA9B3 /* Debug */ = {
+                     isa = PBXBuildStyle;
+                     buildSettings = {
+                            COPY_PHASE_STRIP = NO;
+                     };
+                     name = Debug;
+              };
+              E227C4D98D1E4ECF92684468 /* Release */ = {
+                     isa = PBXBuildStyle;
+                     buildSettings = {
+                            COPY_PHASE_STRIP = NO;
+                     };
+                     name = Release;
+              };
+              1F35DB4EDD5644C685FBD81D /* MinSizeRel */ = {
+                     isa = PBXBuildStyle;
+                     buildSettings = {
+                            COPY_PHASE_STRIP = NO;
+                     };
+                     name = MinSizeRel;
+              };
+              E639C725DE4643F3AB1471CC /* RelWithDebInfo */ = {
+                     isa = PBXBuildStyle;
+                     buildSettings = {
+                            COPY_PHASE_STRIP = NO;
+                     };
+                     name = RelWithDebInfo;
+              };
+/* End PBXBuildStyle section */
+
+/* Begin PBXContainerItemProxy section */
+              324C3024903445B29AF11172 /* PBXContainerItemProxy */ = {
+                     isa = PBXContainerItemProxy;
+                     containerPortal = 8D9EA9F35EDA44FB8B447657 /* Project object */;
+                     proxyType = 1;
+                     remoteGlobalIDString = 8D32157CD2D2432D9F28BC0E;
+                     remoteInfo = ZERO_CHECK;
+              };
+              1629A4509A9049D2AFC4E6DB /* PBXContainerItemProxy */ = {
+                     isa = PBXContainerItemProxy;
+                     containerPortal = 8D9EA9F35EDA44FB8B447657 /* Project object */;
+                     proxyType = 1;
+                     remoteGlobalIDString = 4D9CF15D01614E25A937EA4F;
+                     remoteInfo = RayTrace;
+              };
+              00F4D246FF9149B2B4D292DB /* PBXContainerItemProxy */ = {
+                     isa = PBXContainerItemProxy;
+                     containerPortal = 8D9EA9F35EDA44FB8B447657 /* Project object */;
+                     proxyType = 1;
+                     remoteGlobalIDString = 8D32157CD2D2432D9F28BC0E;
+                     remoteInfo = ZERO_CHECK;
+              };
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+EF6A3959130D423685B7BE4D /* /Users/telabru/Source/ComputerGraphics/RayTrace/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = "sourcecode.text"; fileEncoding = 4; name = "CMakeLists.txt"; path = "CMakeLists.txt"; sourceTree = SOURCE_ROOT; };
+B88D35648CC8420281CB7ECD /* /Users/telabru/Source/ComputerGraphics/RayTrace/src/main/cpp/3ds.cpp */ = {isa = PBXFileReference; explicitFileType = "sourcecode.cpp.cpp"; fileEncoding = 4; name = "3ds.cpp"; path = "src/main/cpp/3ds.cpp"; sourceTree = SOURCE_ROOT; };
+53612C86D92F457083221976 /* /Users/telabru/Source/ComputerGraphics/RayTrace/src/main/cpp/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = "sourcecode.text"; fileEncoding = 4; name = "CMakeLists.txt"; path = "src/main/cpp/CMakeLists.txt"; sourceTree = SOURCE_ROOT; };
+2A672086D9224B6F8C0085DF /* /Users/telabru/Source/ComputerGraphics/RayTrace/src/main/cpp/starter.cpp */ = {isa = PBXFileReference; explicitFileType = "sourcecode.cpp.cpp"; fileEncoding = 4; name = "starter.cpp"; path = "src/main/cpp/starter.cpp"; sourceTree = SOURCE_ROOT; };
+E39CE8FDB4334D32953249F4 /* /Users/telabru/Source/ComputerGraphics/RayTrace/src/main/cpp/xmlParser.cpp */ = {isa = PBXFileReference; explicitFileType = "sourcecode.cpp.cpp"; fileEncoding = 4; name = "xmlParser.cpp"; path = "src/main/cpp/xmlParser.cpp"; sourceTree = SOURCE_ROOT; };
+6E430605D0034921924F27D8 /* RayTrace */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = RayTrace; refType = 0; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+              DFF698BCBCC14CE09451C4E1  = {
+                     isa = PBXGroup;
+                     children = (
+                            991CEE8F2E4844FF8EDC0ADE /* Sources */,
+                            6081E7A3CEC94DDA86E23F6C /* Resources */,
+                            4DC7E7E7D4184BCE906D1639 /* Products */,
+                     );
+                     sourceTree = "<group>";
+              };
+              991CEE8F2E4844FF8EDC0ADE /* Sources */ = {
+                     isa = PBXGroup;
+                     children = (
+                            DAEDEEE7D6934E00A8165DAE /* ALL_BUILD */,
+                            888EC4D396FC4025BD02A933 /* ZERO_CHECK */,
+                            6DB4655A0CF049228825AA19 /* RayTrace */,
+                     );
+                     name = Sources;
+                     sourceTree = "<group>";
+              };
+              6081E7A3CEC94DDA86E23F6C /* Resources */ = {
+                     isa = PBXGroup;
+                     children = (
+                     );
+                     name = Resources;
+                     sourceTree = "<group>";
+              };
+              DAEDEEE7D6934E00A8165DAE /* ALL_BUILD */ = {
+                     isa = PBXGroup;
+                     children = (
+                            34A3B97BAFAB4F1183EE909A /* CMake Rules */,
+                            EF6A3959130D423685B7BE4D /* /Users/telabru/Source/ComputerGraphics/RayTrace/CMakeLists.txt */,
+                     );
+                     name = ALL_BUILD;
+                     sourceTree = "<group>";
+              };
+              34A3B97BAFAB4F1183EE909A /* CMake Rules */ = {
+                     isa = PBXGroup;
+                     children = (
+                     );
+                     name = "CMake Rules";
+                     sourceTree = "<group>";
+              };
+              888EC4D396FC4025BD02A933 /* ZERO_CHECK */ = {
+                     isa = PBXGroup;
+                     children = (
+                            8FAEC75A29C043FF97D43972 /* CMake Rules */,
+                            EF6A3959130D423685B7BE4D /* /Users/telabru/Source/ComputerGraphics/RayTrace/CMakeLists.txt */,
+                     );
+                     name = ZERO_CHECK;
+                     sourceTree = "<group>";
+              };
+              8FAEC75A29C043FF97D43972 /* CMake Rules */ = {
+                     isa = PBXGroup;
+                     children = (
+                     );
+                     name = "CMake Rules";
+                     sourceTree = "<group>";
+              };
+              6DB4655A0CF049228825AA19 /* RayTrace */ = {
+                     isa = PBXGroup;
+                     children = (
+                            46933E34CA65466499E2FB62 /* Source Files */,
+                            53612C86D92F457083221976 /* /Users/telabru/Source/ComputerGraphics/RayTrace/src/main/cpp/CMakeLists.txt */,
+                     );
+                     name = RayTrace;
+                     sourceTree = "<group>";
+              };
+              46933E34CA65466499E2FB62 /* Source Files */ = {
+                     isa = PBXGroup;
+                     children = (
+                            B88D35648CC8420281CB7ECD /* /Users/telabru/Source/ComputerGraphics/RayTrace/src/main/cpp/3ds.cpp */,
+                            2A672086D9224B6F8C0085DF /* /Users/telabru/Source/ComputerGraphics/RayTrace/src/main/cpp/starter.cpp */,
+                            E39CE8FDB4334D32953249F4 /* /Users/telabru/Source/ComputerGraphics/RayTrace/src/main/cpp/xmlParser.cpp */,
+                     );
+                     name = "Source Files";
+                     sourceTree = "<group>";
+              };
+              4DC7E7E7D4184BCE906D1639 /* Products */ = {
+                     isa = PBXGroup;
+                     children = (
+                            6E430605D0034921924F27D8 /* RayTrace */,
+                     );
+                     name = Products;
+                     sourceTree = "<group>";
+              };
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+              4D9CF15D01614E25A937EA4F /* RayTrace */ = {
+                     isa = PBXNativeTarget;
+                     buildConfigurationList = 16681BB1869143189EC178C5 /* Build configuration list for PBXNativeTarget "RayTrace" */;
+                     buildPhases = (
+                            5FECBA568BEA413994F0B79F /* Sources */,
+                     );
+                     buildRules = (
+                     );
+                     dependencies = (
+                            CDA876AB222148B3BFB3235B /* PBXTargetDependency */,
+                     );
+                     name = RayTrace;
+                     productName = RayTrace;
+                     productReference = 6E430605D0034921924F27D8 /* RayTrace */;
+                     productType = "com.apple.product-type.tool";
+              };
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+              8D9EA9F35EDA44FB8B447657 /* Project object */ = {
+                     isa = PBXProject;
+                     attributes = {
+                            BuildIndependentTargetsInParallel = YES;
+                     };
+                     buildConfigurationList = 7043AAED62C04455B25EA1CE /* Build configuration list for PBXProject  "Raytrace" */;
+                     buildSettings = {
+                     };
+                     buildStyles = (
+                            BEC4282B8405457E98CDA9B3 /* Debug */,
+                            E227C4D98D1E4ECF92684468 /* Release */,
+                            1F35DB4EDD5644C685FBD81D /* MinSizeRel */,
+                            E639C725DE4643F3AB1471CC /* RelWithDebInfo */,
+                     );
+                     compatibilityVersion = "Xcode 3.2";
+                     hasScannedForEncodings = 0;
+                     mainGroup = DFF698BCBCC14CE09451C4E1;
+                     projectDirPath = "..";
+                     projectRoot = "";
+                     targets = (
+                            BB9DFA978D9644029B889CE1 /* ALL_BUILD */,
+                            8D32157CD2D2432D9F28BC0E /* ZERO_CHECK */,
+                            4D9CF15D01614E25A937EA4F /* RayTrace */,
+                     );
+              };
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+              CB5B580B8BC84A0FBC777AA5 /*  */ = {
+                     isa = PBXShellScriptBuildPhase;
+                     buildActionMask = 2147483647;
+                     files = (
+                     );
+                     inputPaths = (
+                     );
+                     outputPaths = (
+                     );
+                     runOnlyForDeploymentPostprocessing = 0;
+                     shellPath = /bin/sh;
+                     shellScript = "# shell script goes here
+exit 0";
+                     showEnvVarsInLog = 0;
+              };
+              42E37BD267EC4876A0458191 /* CMake Rules */ = {
+                     isa = PBXShellScriptBuildPhase;
+                     buildActionMask = 2147483647;
+                     files = (
+                     );
+                     name = "CMake Rules";
+                     runOnlyForDeploymentPostprocessing = 0;
+                     shellPath = /bin/sh;
+                     shellScript = "make -C /Users/telabru/Source/ComputerGraphics/RayTrace/buildXcode -f /Users/telabru/Source/ComputerGraphics/RayTrace/buildXcode/CMakeScripts/ALL_BUILD_cmakeRulesBuildPhase.make$CONFIGURATION all";
+                     showEnvVarsInLog = 0;
+              };
+              FF35A16FA0AE48CB8B37B701 /*  */ = {
+                     isa = PBXShellScriptBuildPhase;
+                     buildActionMask = 2147483647;
+                     files = (
+                     );
+                     inputPaths = (
+                     );
+                     outputPaths = (
+                     );
+                     runOnlyForDeploymentPostprocessing = 0;
+                     shellPath = /bin/sh;
+                     shellScript = "# shell script goes here
+exit 0";
+                     showEnvVarsInLog = 0;
+              };
+              FD492B517AF445EE986FF3F3 /* CMake Rules */ = {
+                     isa = PBXShellScriptBuildPhase;
+                     buildActionMask = 2147483647;
+                     files = (
+                     );
+                     name = "CMake Rules";
+                     runOnlyForDeploymentPostprocessing = 0;
+                     shellPath = /bin/sh;
+                     shellScript = "make -C /Users/telabru/Source/ComputerGraphics/RayTrace/buildXcode -f /Users/telabru/Source/ComputerGraphics/RayTrace/buildXcode/CMakeScripts/ZERO_CHECK_cmakeRulesBuildPhase.make$CONFIGURATION all";
+                     showEnvVarsInLog = 0;
+              };
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+              5FECBA568BEA413994F0B79F /* Sources */ = {
+                     isa = PBXSourcesBuildPhase;
+                     buildActionMask = 2147483647;
+                     files = (
+                            3795866BC6794937BF139E81 /* /Users/telabru/Source/ComputerGraphics/RayTrace/src/main/cpp/3ds.cpp */,
+                            19F63D78BF9B4469881B2AF5 /* /Users/telabru/Source/ComputerGraphics/RayTrace/src/main/cpp/starter.cpp */,
+                            C62B3302A0324E09862A9189 /* /Users/telabru/Source/ComputerGraphics/RayTrace/src/main/cpp/xmlParser.cpp */,
+                     );
+                     runOnlyForDeploymentPostprocessing = 0;
+              };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+              035DA08C7A2F451D9BB7118C /* PBXTargetDependency */ = {
+                     isa = PBXTargetDependency;
+                     target = 8D32157CD2D2432D9F28BC0E /* ZERO_CHECK */;
+                     targetProxy = 324C3024903445B29AF11172 /* PBXContainerItemProxy */;
+              };
+              908FCB5E09D44A3EAC7571C7 /* PBXTargetDependency */ = {
+                     isa = PBXTargetDependency;
+                     target = 4D9CF15D01614E25A937EA4F /* RayTrace */;
+                     targetProxy = 1629A4509A9049D2AFC4E6DB /* PBXContainerItemProxy */;
+              };
+              CDA876AB222148B3BFB3235B /* PBXTargetDependency */ = {
+                     isa = PBXTargetDependency;
+                     target = 8D32157CD2D2432D9F28BC0E /* ZERO_CHECK */;
+                     targetProxy = 00F4D246FF9149B2B4D292DB /* PBXContainerItemProxy */;
+              };
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+              976C882D51EB4CFC9DE03835 /* Debug */ = {
+                     isa = XCBuildConfiguration;
+                     buildSettings = {
+                            ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+                            ONLY_ACTIVE_ARCH = YES;
+                            SDKROOT = "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk";
+                            SYMROOT = /Users/telabru/Source/ComputerGraphics/RayTrace/buildXcode/build;
+                     };
+                     name = Debug;
+              };
+              BCA6255C495B41B29E7F1FE1 /* Release */ = {
+                     isa = XCBuildConfiguration;
+                     buildSettings = {
+                            ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+                            ONLY_ACTIVE_ARCH = YES;
+                            SDKROOT = "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk";
+                            SYMROOT = /Users/telabru/Source/ComputerGraphics/RayTrace/buildXcode/build;
+                     };
+                     name = Release;
+              };
+              01D2840618DB4EBDA7AA40F7 /* MinSizeRel */ = {
+                     isa = XCBuildConfiguration;
+                     buildSettings = {
+                            ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+                            ONLY_ACTIVE_ARCH = YES;
+                            SDKROOT = "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk";
+                            SYMROOT = /Users/telabru/Source/ComputerGraphics/RayTrace/buildXcode/build;
+                     };
+                     name = MinSizeRel;
+              };
+              32377750D6B24015BC440915 /* RelWithDebInfo */ = {
+                     isa = XCBuildConfiguration;
+                     buildSettings = {
+                            ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+                            ONLY_ACTIVE_ARCH = YES;
+                            SDKROOT = "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk";
+                            SYMROOT = /Users/telabru/Source/ComputerGraphics/RayTrace/buildXcode/build;
+                     };
+                     name = RelWithDebInfo;
+              };
+              A863CCE835204F48804B3B7E /* Debug */ = {
+                     isa = XCBuildConfiguration;
+                     buildSettings = {
+                            COMBINE_HIDPI_IMAGES = YES;
+                            GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+                            GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+                            GCC_OPTIMIZATION_LEVEL = 0;
+                            GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+                            GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+                            HEADER_SEARCH_PATHS = (/Users/telabru/Source/ComputerGraphics/RayTrace/include, );
+                            INSTALL_PATH = "";
+                            OTHER_CFLAGS = "  ";
+                            OTHER_LDFLAGS = " ";
+                            OTHER_REZFLAGS = "";
+                            PRODUCT_NAME = ALL_BUILD;
+                            SECTORDER_FLAGS = "";
+                            SYMROOT = /Users/telabru/Source/ComputerGraphics/RayTrace/buildXcode;
+                            USE_HEADERMAP = NO;
+                            WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", );
+                     };
+                     name = Debug;
+              };
+              72270C99CCF749339213D21E /* Release */ = {
+                     isa = XCBuildConfiguration;
+                     buildSettings = {
+                            COMBINE_HIDPI_IMAGES = YES;
+                            GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+                            GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+                            GCC_OPTIMIZATION_LEVEL = 0;
+                            GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+                            GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+                            HEADER_SEARCH_PATHS = (/Users/telabru/Source/ComputerGraphics/RayTrace/include, );
+                            INSTALL_PATH = "";
+                            OTHER_CFLAGS = "  ";
+                            OTHER_LDFLAGS = " ";
+                            OTHER_REZFLAGS = "";
+                            PRODUCT_NAME = ALL_BUILD;
+                            SECTORDER_FLAGS = "";
+                            SYMROOT = /Users/telabru/Source/ComputerGraphics/RayTrace/buildXcode;
+                            USE_HEADERMAP = NO;
+                            WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", );
+                     };
+                     name = Release;
+              };
+              1F422FD26F23440EA17A9E89 /* MinSizeRel */ = {
+                     isa = XCBuildConfiguration;
+                     buildSettings = {
+                            COMBINE_HIDPI_IMAGES = YES;
+                            GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+                            GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+                            GCC_OPTIMIZATION_LEVEL = 0;
+                            GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+                            GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+                            HEADER_SEARCH_PATHS = (/Users/telabru/Source/ComputerGraphics/RayTrace/include, );
+                            INSTALL_PATH = "";
+                            OTHER_CFLAGS = "  ";
+                            OTHER_LDFLAGS = " ";
+                            OTHER_REZFLAGS = "";
+                            PRODUCT_NAME = ALL_BUILD;
+                            SECTORDER_FLAGS = "";
+                            SYMROOT = /Users/telabru/Source/ComputerGraphics/RayTrace/buildXcode;
+                            USE_HEADERMAP = NO;
+                            WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", );
+                     };
+                     name = MinSizeRel;
+              };
+              2C2810E9E4DC4C82837B6F6D /* RelWithDebInfo */ = {
+                     isa = XCBuildConfiguration;
+                     buildSettings = {
+                            COMBINE_HIDPI_IMAGES = YES;
+                            GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+                            GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+                            GCC_OPTIMIZATION_LEVEL = 0;
+                            GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+                            GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+                            HEADER_SEARCH_PATHS = (/Users/telabru/Source/ComputerGraphics/RayTrace/include, );
+                            INSTALL_PATH = "";
+                            OTHER_CFLAGS = "  ";
+                            OTHER_LDFLAGS = " ";
+                            OTHER_REZFLAGS = "";
+                            PRODUCT_NAME = ALL_BUILD;
+                            SECTORDER_FLAGS = "";
+                            SYMROOT = /Users/telabru/Source/ComputerGraphics/RayTrace/buildXcode;
+                            USE_HEADERMAP = NO;
+                            WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", );
+                     };
+                     name = RelWithDebInfo;
+              };
+              D8F700F8EE944CF3B1A9E443 /* Debug */ = {
+                     isa = XCBuildConfiguration;
+                     buildSettings = {
+                            COMBINE_HIDPI_IMAGES = YES;
+                            GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+                            GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+                            GCC_OPTIMIZATION_LEVEL = 0;
+                            GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+                            GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+                            HEADER_SEARCH_PATHS = (/Users/telabru/Source/ComputerGraphics/RayTrace/include, );
+                            INSTALL_PATH = "";
+                            OTHER_CFLAGS = "  ";
+                            OTHER_LDFLAGS = " ";
+                            OTHER_REZFLAGS = "";
+                            PRODUCT_NAME = ZERO_CHECK;
+                            SECTORDER_FLAGS = "";
+                            SYMROOT = /Users/telabru/Source/ComputerGraphics/RayTrace/buildXcode;
+                            USE_HEADERMAP = NO;
+                            WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", );
+                     };
+                     name = Debug;
+              };
+              BFED1E1E388F4780AFB67A38 /* Release */ = {
+                     isa = XCBuildConfiguration;
+                     buildSettings = {
+                            COMBINE_HIDPI_IMAGES = YES;
+                            GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+                            GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+                            GCC_OPTIMIZATION_LEVEL = 0;
+                            GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+                            GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+                            HEADER_SEARCH_PATHS = (/Users/telabru/Source/ComputerGraphics/RayTrace/include, );
+                            INSTALL_PATH = "";
+                            OTHER_CFLAGS = "  ";
+                            OTHER_LDFLAGS = " ";
+                            OTHER_REZFLAGS = "";
+                            PRODUCT_NAME = ZERO_CHECK;
+                            SECTORDER_FLAGS = "";
+                            SYMROOT = /Users/telabru/Source/ComputerGraphics/RayTrace/buildXcode;
+                            USE_HEADERMAP = NO;
+                            WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", );
+                     };
+                     name = Release;
+              };
+              B45A31712EE44D188C52611C /* MinSizeRel */ = {
+                     isa = XCBuildConfiguration;
+                     buildSettings = {
+                            COMBINE_HIDPI_IMAGES = YES;
+                            GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+                            GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+                            GCC_OPTIMIZATION_LEVEL = 0;
+                            GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+                            GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+                            HEADER_SEARCH_PATHS = (/Users/telabru/Source/ComputerGraphics/RayTrace/include, );
+                            INSTALL_PATH = "";
+                            OTHER_CFLAGS = "  ";
+                            OTHER_LDFLAGS = " ";
+                            OTHER_REZFLAGS = "";
+                            PRODUCT_NAME = ZERO_CHECK;
+                            SECTORDER_FLAGS = "";
+                            SYMROOT = /Users/telabru/Source/ComputerGraphics/RayTrace/buildXcode;
+                            USE_HEADERMAP = NO;
+                            WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", );
+                     };
+                     name = MinSizeRel;
+              };
+              C76FE01FCD0E460F9E4CC01B /* RelWithDebInfo */ = {
+                     isa = XCBuildConfiguration;
+                     buildSettings = {
+                            COMBINE_HIDPI_IMAGES = YES;
+                            GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+                            GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+                            GCC_OPTIMIZATION_LEVEL = 0;
+                            GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+                            GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+                            HEADER_SEARCH_PATHS = (/Users/telabru/Source/ComputerGraphics/RayTrace/include, );
+                            INSTALL_PATH = "";
+                            OTHER_CFLAGS = "  ";
+                            OTHER_LDFLAGS = " ";
+                            OTHER_REZFLAGS = "";
+                            PRODUCT_NAME = ZERO_CHECK;
+                            SECTORDER_FLAGS = "";
+                            SYMROOT = /Users/telabru/Source/ComputerGraphics/RayTrace/buildXcode;
+                            USE_HEADERMAP = NO;
+                            WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", );
+                     };
+                     name = RelWithDebInfo;
+              };
+              5FE8919675894968BC8EFBCA /* Debug */ = {
+                     isa = XCBuildConfiguration;
+                     buildSettings = {
+                            COMBINE_HIDPI_IMAGES = YES;
+                            EXECUTABLE_PREFIX = "";
+                            EXECUTABLE_SUFFIX = "";
+                            FRAMEWORK_SEARCH_PATHS = ("/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks", );
+                            GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+                            GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+                            GCC_OPTIMIZATION_LEVEL = 0;
+                            GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+                            GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+                            HEADER_SEARCH_PATHS = (/Users/telabru/Source/ComputerGraphics/RayTrace/include, );
+                            INSTALL_PATH = "";
+                            LIBRARY_SEARCH_PATHS = "";
+                            OTHER_CFLAGS = "    ";
+                            OTHER_CPLUSPLUSFLAGS = "-std=c++0x     ";
+                            OTHER_LDFLAGS = "  -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -framework GLUT -framework OpenGL -framework AGL";
+                            OTHER_REZFLAGS = "";
+                            PRODUCT_NAME = RayTrace;
+                            SECTORDER_FLAGS = "";
+                            SYMROOT = /Users/telabru/Source/ComputerGraphics/RayTrace/buildXcode/src/main/cpp;
+                            USE_HEADERMAP = NO;
+                            WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", );
+                     };
+                     name = Debug;
+              };
+              C2DAF5D527A44321B27CA08D /* Release */ = {
+                     isa = XCBuildConfiguration;
+                     buildSettings = {
+                            COMBINE_HIDPI_IMAGES = YES;
+                            EXECUTABLE_PREFIX = "";
+                            EXECUTABLE_SUFFIX = "";
+                            FRAMEWORK_SEARCH_PATHS = ("/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks", );
+                            GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+                            GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+                            GCC_OPTIMIZATION_LEVEL = 3;
+                            GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+                            GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+                            HEADER_SEARCH_PATHS = (/Users/telabru/Source/ComputerGraphics/RayTrace/include, );
+                            INSTALL_PATH = "";
+                            LIBRARY_SEARCH_PATHS = "";
+                            OTHER_CFLAGS = "    -DNDEBUG  ";
+                            OTHER_CPLUSPLUSFLAGS = "-std=c++0x     -DNDEBUG  ";
+                            OTHER_LDFLAGS = "  -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -framework GLUT -framework OpenGL -framework AGL";
+                            OTHER_REZFLAGS = "";
+                            PRODUCT_NAME = RayTrace;
+                            SECTORDER_FLAGS = "";
+                            SYMROOT = /Users/telabru/Source/ComputerGraphics/RayTrace/buildXcode/src/main/cpp;
+                            USE_HEADERMAP = NO;
+                            WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", );
+                     };
+                     name = Release;
+              };
+              09DA8295E42F403298C04407 /* MinSizeRel */ = {
+                     isa = XCBuildConfiguration;
+                     buildSettings = {
+                            COMBINE_HIDPI_IMAGES = YES;
+                            EXECUTABLE_PREFIX = "";
+                            EXECUTABLE_SUFFIX = "";
+                            FRAMEWORK_SEARCH_PATHS = ("/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks", );
+                            GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+                            GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+                            GCC_OPTIMIZATION_LEVEL = s;
+                            GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+                            GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+                            HEADER_SEARCH_PATHS = (/Users/telabru/Source/ComputerGraphics/RayTrace/include, );
+                            INSTALL_PATH = "";
+                            LIBRARY_SEARCH_PATHS = "";
+                            OTHER_CFLAGS = "    -DNDEBUG  ";
+                            OTHER_CPLUSPLUSFLAGS = "-std=c++0x     -DNDEBUG  ";
+                            OTHER_LDFLAGS = "  -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -framework GLUT -framework OpenGL -framework AGL";
+                            OTHER_REZFLAGS = "";
+                            PRODUCT_NAME = RayTrace;
+                            SECTORDER_FLAGS = "";
+                            SYMROOT = /Users/telabru/Source/ComputerGraphics/RayTrace/buildXcode/src/main/cpp;
+                            USE_HEADERMAP = NO;
+                            WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", );
+                     };
+                     name = MinSizeRel;
+              };
+              CF402C6000414B53A62BC907 /* RelWithDebInfo */ = {
+                     isa = XCBuildConfiguration;
+                     buildSettings = {
+                            COMBINE_HIDPI_IMAGES = YES;
+                            EXECUTABLE_PREFIX = "";
+                            EXECUTABLE_SUFFIX = "";
+                            FRAMEWORK_SEARCH_PATHS = ("/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/System/Library/Frameworks", );
+                            GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+                            GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+                            GCC_OPTIMIZATION_LEVEL = 2;
+                            GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+                            GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+                            HEADER_SEARCH_PATHS = (/Users/telabru/Source/ComputerGraphics/RayTrace/include, );
+                            INSTALL_PATH = "";
+                            LIBRARY_SEARCH_PATHS = "";
+                            OTHER_CFLAGS = "       -DNDEBUG  ";
+                            OTHER_CPLUSPLUSFLAGS = "-std=c++0x        -DNDEBUG  ";
+                            OTHER_LDFLAGS = "  -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -framework GLUT -framework OpenGL -framework AGL";
+                            OTHER_REZFLAGS = "";
+                            PRODUCT_NAME = RayTrace;
+                            SECTORDER_FLAGS = "";
+                            SYMROOT = /Users/telabru/Source/ComputerGraphics/RayTrace/buildXcode/src/main/cpp;
+                            USE_HEADERMAP = NO;
+                            WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", );
+                     };
+                     name = RelWithDebInfo;
+              };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+              7043AAED62C04455B25EA1CE /* Build configuration list for PBXProject  "Raytrace" */ = {
+                     isa = XCConfigurationList;
+                     buildConfigurations = (
+                            976C882D51EB4CFC9DE03835 /* Debug */,
+                            BCA6255C495B41B29E7F1FE1 /* Release */,
+                            01D2840618DB4EBDA7AA40F7 /* MinSizeRel */,
+                            32377750D6B24015BC440915 /* RelWithDebInfo */,
+                     );
+                     defaultConfigurationIsVisible = 0;
+                     defaultConfigurationName = Debug;
+              };
+              A5F3A3BEC0B24AABAB40EC8A /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+                     isa = XCConfigurationList;
+                     buildConfigurations = (
+                            A863CCE835204F48804B3B7E /* Debug */,
+                            72270C99CCF749339213D21E /* Release */,
+                            1F422FD26F23440EA17A9E89 /* MinSizeRel */,
+                            2C2810E9E4DC4C82837B6F6D /* RelWithDebInfo */,
+                     );
+                     defaultConfigurationIsVisible = 0;
+                     defaultConfigurationName = Debug;
+              };
+              6F2EB5A348464B69BD6E4618 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+                     isa = XCConfigurationList;
+                     buildConfigurations = (
+                            D8F700F8EE944CF3B1A9E443 /* Debug */,
+                            BFED1E1E388F4780AFB67A38 /* Release */,
+                            B45A31712EE44D188C52611C /* MinSizeRel */,
+                            C76FE01FCD0E460F9E4CC01B /* RelWithDebInfo */,
+                     );
+                     defaultConfigurationIsVisible = 0;
+                     defaultConfigurationName = Debug;
+              };
+              16681BB1869143189EC178C5 /* Build configuration list for PBXNativeTarget "RayTrace" */ = {
+                     isa = XCConfigurationList;
+                     buildConfigurations = (
+                            5FE8919675894968BC8EFBCA /* Debug */,
+                            C2DAF5D527A44321B27CA08D /* Release */,
+                            09DA8295E42F403298C04407 /* MinSizeRel */,
+                            CF402C6000414B53A62BC907 /* RelWithDebInfo */,
+                     );
+                     defaultConfigurationIsVisible = 0;
+                     defaultConfigurationName = Debug;
+              };
+/* End XCConfigurationList section */
+       };
+       rootObject = 8D9EA9F35EDA44FB8B447657;
+}

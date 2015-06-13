@@ -7,41 +7,22 @@
 
 class Ray
 {
-private:
-  Vector _start;
-  Vector _direction;
-  Vector _endpoint;
+    public:
+        Ray(Vector pOriginPos, Vector pDirVec);
 
-public:
-  Ray(Vector pOriginPos, Vector pDirVec)
-  {
-    _start = pOriginPos;
-    _direction = pDirVec.Normalize();
-  }
+        Ray(Vector pOriginPos, Vector pDirVec, Vector endpoint);
 
-  Ray(Vector pOriginPos, Vector pDirVec, Vector endpoint)
-  {
-    _start = pOriginPos;
-    _direction = pDirVec.Normalize();
-    _endpoint = endpoint;
-  }
+        std::string ToString();
 
-  std::string ToString()
-  {
-    std::stringstream str;
-    str<< "Point: <" << _start.x << "," << _start.y << "," << _start.z << "> ";
-    str<< "Direction <" <<_direction.x << "," <<_direction.y << ","  <<_direction.z << "> " ;
-//    str<< "Endpoint <" <<_endpoint.x << "," <<_endpoint.y << ","  <<_endpoint.z << ">" ;
-    return str.str();
-  }
+        Vector GetPoint(const float t) {return mStart + mDirection * t;}
 
-  Vector GetPoint(float t)
-  {
-    return _start + _direction * t;
-  }
-  Vector GetOrigin(){return _start;}
-  Vector GetDirection(){return _direction;}
+        Vector GetOrigin(){return mStart;}
+        Vector GetDirection(){return mDirection;}
 
+    private:
+        Vector mStart;
+        Vector mDirection;
+        Vector mEndpoint;
 };
 
 #endif
